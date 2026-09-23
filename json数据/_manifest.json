@@ -1,0 +1,57 @@
+{
+ "app": "bagutong",
+ "fetched_at": "2026-09-23T06:34:08.981290+00:00",
+ "source": "https://github.com/kajweb/dict",
+ "packs": [
+  {
+   "file": "qpack-imp-cet4-word.json",
+   "category": "imp-cet4-word",
+   "name": "四级核心词·词卡",
+   "track": "cet4",
+   "count": 1162,
+   "kind": "词卡",
+   "bytes": 1249418,
+   "zip": "1523620217431_CET4luan_1.zip"
+  },
+  {
+   "file": "qpack-imp-cet4-exam.json",
+   "category": "imp-cet4-exam",
+   "name": "四级核心词·真题单选",
+   "track": "cet4",
+   "count": 132,
+   "kind": "真题单选",
+   "bytes": 84748,
+   "zip": "1523620217431_CET4luan_1.zip"
+  },
+  {
+   "file": "qpack-imp-cet6-word.json",
+   "category": "imp-cet6-word",
+   "name": "六级核心词·词卡",
+   "track": "cet6",
+   "count": 1228,
+   "kind": "词卡",
+   "bytes": 1183787,
+   "zip": "1521164660466_CET6luan_1.zip"
+  },
+  {
+   "file": "qpack-imp-cet6-exam.json",
+   "category": "imp-cet6-exam",
+   "name": "六级核心词·真题单选",
+   "track": "cet6",
+   "count": 91,
+   "kind": "真题单选",
+   "bytes": 57408,
+   "zip": "1521164660466_CET6luan_1.zip"
+  },
+  {
+   "file": "qpack-imp-kaoyan-word.json",
+   "category": "imp-kaoyan-word",
+   "name": "考研核心词·词卡",
+   "track": "english",
+   "count": 1341,
+   "kind": "词卡",
+   "bytes": 1458574,
+   "zip": "1521164661106_KaoYanluan_1.zip"
+  }
+ ]
+}

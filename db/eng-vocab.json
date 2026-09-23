@@ -1,0 +1,212 @@
+{
+ "track": "english",
+ "id": "eng-vocab",
+ "name": "核心词汇",
+ "badge": "词汇",
+ "color": "#C4622D",
+ "desc": "真题高频词 · 词根词缀 · 熟词僻义 · 一词一卡",
+ "questions": [
+  {
+   "id": "ev-001",
+   "q": "advocate",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "a开头"
+   ],
+   "a": "## 卡片\n\n**advocate**　/ˈædvəkeɪt/（v.）　/ˈædvəkət/（n.）\n\n| 词性 | 释义 |\n| --- | --- |\n| v. | 提倡，主张，拥护 |\n| n. | 拥护者，倡导者；辩护律师 |\n\n## 真题短语\n\n- advocate the reform **提倡改革**\n- a strong advocate of... …的坚定支持者\n- advocate doing sth（注意：不接 to do）\n\n## 真题语境\n\n> Some experts **advocate** paying people to exercise.\n> 一些专家提倡付费让人们去锻炼。\n\n## 同义替换（阅读正确选项常见改写）\n\nsupport / promote / champion / be in favor of\n\n## 记忆\n\nad(加强) + voc(喊，同 voice) + ate → 大声喊出来 → 提倡\n同根词：vocal 声音的；vocabulary 词汇；provoke 激怒（pro 向前 + voc 喊）"
+  },
+  {
+   "id": "ev-002",
+   "q": "undermine",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "u开头"
+   ],
+   "a": "## 卡片\n\n**undermine**　/ˌʌndəˈmaɪn/　v.\n\n逐渐破坏，削弱（力量/权威/基础）——写作贬义高级词\n\n## 真题短语\n\n- undermine public confidence **削弱公众信心**\n- undermine the foundation 动摇根基\n- undermine one's authority 削弱某人的权威\n\n## 真题语境\n\n> The scandal **undermined** public trust in the institution.\n> 丑闻削弱了公众对该机构的信任。\n\n## 同义替换\n\nweaken / impair / damage / erode / sap\n\n## 记忆\n\nunder(在下面) + mine(挖矿) → 在下面挖坑 → 从根基上暗中破坏\n写作加分句：Such a trend will inevitably undermine social cohesion."
+  },
+  {
+   "id": "ev-003",
+   "q": "inevitable",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "i开头"
+   ],
+   "a": "## 卡片\n\n**inevitable**　/ɪnˈevɪtəbl/　adj.\n\n不可避免的，必然（会）发生的\n\n## 真题短语\n\n- an inevitable trend/result 必然趋势/结果\n- It is inevitable that... …是不可避免的（作文万能句）\n- inevitable consequences 必然后果\n\n## 真题语境\n\n> Conflict between the two groups was **inevitable**.\n> 两个群体之间的冲突是不可避免的。\n\n## 同义替换\n\nunavoidable / inescapable / bound to happen / certain\n\n## 派生\n\ninevitably（adv. 不可避免地）—— 阅读选项高频出现\n作文句：With the acceleration of urbanization, such problems are inevitable."
+  },
+  {
+   "id": "ev-004",
+   "q": "comprehensive",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "c开头"
+   ],
+   "a": "## 卡片\n\n**comprehensive**　/ˌkɒmprɪˈhensɪv/　adj.\n\n全面的，综合的；（人）理解力强的\n\n## 真题短语\n\n- a comprehensive study/report 全面的研究/报告\n- comprehensive evaluation 综合评价\n- comprehensive reform 综合改革\n\n## 真题语境\n\n> The report offers a **comprehensive** analysis of the problem.\n> 报告对这一问题做了全面分析。\n\n## 同义替换\n\nthorough / all-round / exhaustive / complete\n\n## 辨析（易混词，完形高频）\n\n| 词 | 义 |\n| --- | --- |\n| comprehensive | 全面的 |\n| comprehensible | 可理解的 |\n| comprehension | 理解（力）；阅读理解 |\n\n记忆：com(共同) + prehend(抓，同 apprehend 逮捕) + ive → 全都抓住 → 全面的"
+  },
+  {
+   "id": "ev-005",
+   "q": "subtle",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "核心词",
+    "s开头"
+   ],
+   "a": "## 卡片\n\n**subtle**　/ˈsʌtl/　adj.（注意 b 不发音！）\n\n1. 细微的，不明显的（差异/变化）\n2. 微妙的，难以言表的\n3. 巧妙的，敏锐的\n\n## 真题短语\n\n- a subtle difference/change 细微差别/变化\n- subtle flavor  subtle 味道微妙\n- a subtle mind 敏锐的头脑\n- subtle hint 微妙暗示\n\n## 真题语境\n\n> There is a **subtle** distinction between the two concepts.\n> 这两个概念之间有细微差别。\n\n## 同义替换\n\ndelicate / fine / slight / nuanced / understated\n\n## 派生\n\nsubtly（adv.）；subtlety（n. 微妙，细微）\n阅读技巧：选项出现 subtle difference 常为正确答案的特征词（语气谨慎）"
+  },
+  {
+   "id": "ev-006",
+   "q": "sophisticated",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "核心词",
+    "s开头"
+   ],
+   "a": "## 卡片\n\n**sophisticated**　/səˈfɪstɪkeɪtɪd/　adj.\n\n1. 复杂精密的（设备/系统）\n2. 老练的，见多识广的（人）\n3. 高深的（理论/方法）\n\n## 真题短语\n\n- sophisticated technology/equipment 尖端技术/精密设备\n- a sophisticated consumer 老练的消费者\n- a sophisticated approach 复杂精密的方法\n\n## 真题语境\n\n> Modern browsers use **sophisticated** algorithms to filter spam.\n> 现代浏览器使用复杂算法过滤垃圾信息。\n\n## 同义替换\n\ncomplex / intricate / advanced / elaborate / worldly\n\n## 派生\n\n名 sophist（诡辩家，词源\"智慧的人\"）\nsophomore 大二学生（字面\"聪明的傻瓜\"）"
+  },
+  {
+   "id": "ev-007",
+   "q": "overwhelming",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "o开头"
+   ],
+   "a": "## 卡片\n\n**overwhelming**　/ˌəʊvəˈwelmɪŋ/　adj.\n\n压倒性的，势不可挡的；令人不知所措的\n\n## 真题短语\n\n- overwhelming evidence 压倒性证据（**阅读态度题信号词**）\n- an overwhelming majority 绝大多数\n- overwhelming victory 压倒性胜利\n- feel overwhelmed 感到不知所措\n\n## 真题语境\n\n> The **overwhelming** majority of respondents supported the policy.\n> 绝大多数受访者支持该政策。\n\n## 同义替换\n\ncrushing / irresistible / overpowering / staggering\n\n## 词族\n\noverwhelm（v. 淹没，压倒）→ overwhelming（adj.）→ overwhelmingly（adv.）\n写作句：The benefits overwhelmingly outweigh the drawbacks.（利远大于弊，万能句）"
+  },
+  {
+   "id": "ev-008",
+   "q": "controversial",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "c开头"
+   ],
+   "a": "## 卡片\n\n**controversial**　/ˌkɒntrəˈvɜːʃl/　adj.\n\n有争议的，引起争论的\n\n## 真题短语\n\n- a controversial issue/decision 有争议的议题/决定\n- highly controversial 极具争议\n- controversial topic 争议话题\n\n## 真题语境\n\n> The proposal remains highly **controversial** among experts.\n> 该提案在专家中仍极具争议。\n\n## 同义替换\n\ndisputed / contentious / debatable / divisive\n\n## 词族\n\ncontroversy（n. 争议）：the controversy over... 关于…的争论\n**写作高频**：a controversial issue 引出话题；It is widely acknowledged that... 替代 I think"
+  },
+  {
+   "id": "ev-009",
+   "q": "manifest",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "核心词",
+    "熟词僻义",
+    "m开头"
+   ],
+   "a": "## 卡片\n\n**manifest**　/ˈmænɪfest/\n\n| 词性 | 释义 |\n| --- | --- |\n| v. | 显示，表明（≈show，正式） |\n| adj. | 明显的，显而易见的 |\n| n. | 载货单，旅客名单（熟词僻义） |\n\n## 真题短语\n\n- manifest itself in... 体现在…方面\n- manifest symptoms 表现出症状\n- manifest interest 表现出兴趣\n\n## 真题语境\n\n> Stress **manifests** itself in physical symptoms.\n> 压力以身体症状的形式显现出来。\n\n## 同义替换\n\ndemonstrate / reveal / exhibit / indicate / display\n\n## 记忆\n\nman(手) + fest(打击，同 festive 敲击) → 用手打出来给人看 → 显示\n搭配名词 manifestation（表现形式）：cultural manifestations 文化表征"
+  },
+  {
+   "id": "ev-010",
+   "q": "legitimate",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "核心词",
+    "熟词僻义",
+    "l开头"
+   ],
+   "a": "## 卡片\n\n**legitimate**　/lɪˈdʒɪtɪmət/（adj.）　/lɪˈdʒɪtɪmeɪt/（v.）\n\n| 词性 | 释义 |\n| --- | --- |\n| adj. | 合法的；合情合理的 |\n| v. | 使合法化，认可（熟词僻义！） |\n\n## 真题短语\n\n- legitimate concerns/rights 合理的担忧/合法权利\n- a legitimate target 正当目标\n- legitimize the practice 使这种做法合法化\n\n## 真题语境\n\n> Critics argue the ruling **legitimizes** discrimination.\n> 批评者认为该裁决使歧视合法化。\n\n## 同义替换\n\nadj.: lawful / valid / justifiable / reasonable\nv.: authorize / justify / legalize\n\n## 记忆\n\nleg(法律，同 legal 合法的) + itimate → 合法的\n同根：legislation 立法；legislature 立法机关"
+  },
+  {
+   "id": "ev-011",
+   "q": "manipulate",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "核心词",
+    "m开头"
+   ],
+   "a": "## 卡片\n\n**manipulate**　/məˈnɪpjuleɪt/　v.\n\n1. （暗中）操纵，控制（人/舆论）——贬义\n2. 熟练操作，处理（数据/机器）——中性\n\n## 真题短语\n\n- manipulate public opinion 操纵舆论\n- manipulate the market 操纵市场\n- manipulate data 处理/篡改数据\n\n## 真题语境\n\n> Advertisers try to **manipulate** consumers' emotions.\n> 广告商试图操纵消费者的情绪。\n\n## 同义替换\n\ncontrol / exploit / influence / steer / tamper with（篡改）\n\n## 派生\n\nmanipulation（n.）；manipulative（adj. 爱摆布人的）\n记忆：mani(手，同 manual 手动的) + pul(驱动) → 用手摆布 → 操纵"
+  },
+  {
+   "id": "ev-012",
+   "q": "address 的熟词僻义",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "熟词僻义",
+    "a开头"
+   ],
+   "a": "## 卡片\n\n**address**　/əˈdres/\n\n| 常见义 | 考研义（高频！） |\n| --- | --- |\n| n. 地址 | **v. 解决，处理**（≈deal with / tackle） |\n| | **v. 向…发表演说**（address the audience） |\n| | **v. 称呼**（address sb. as...） |\n| | n. 演说，致辞 |\n\n## 真题短语\n\n- **address the problem** 解决问题（阅读+作文双高频）\n- address climate change 应对气候变化\n- address the audience 向听众致辞\n\n## 真题语境\n\n> The government must **address** the housing shortage urgently.\n> 政府必须紧急解决住房短缺问题。\n\n## 同义替换\n\ntackle / deal with / handle / cope with / resolve\n\n## 提醒\n\n看到 address + 问题类名词，99% 是\"解决\"而非\"地址\"\n写作万能句：It is high time that we addressed this problem.（虚拟语气：addressed 用过去式）"
+  },
+  {
+   "id": "ev-013",
+   "q": "observe 的熟词僻义",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "熟词僻义",
+    "o开头"
+   ],
+   "a": "## 卡片\n\n**observe**　/əbˈzɜːv/\n\n| 常见义 | 考研义（高频！） |\n| --- | --- |\n| v. 观察 | **v. 遵守**（rules / laws / traditions）≈obey |\n| | v. 评论，评述（≈remark） |\n| | v. 庆祝（节日）（≈celebrate） |\n\n## 真题短语\n\n- observe the rules/regulations 遵守规则\n- observe traffic laws 遵守交通法规\n- observe a tradition 沿袭传统\n- He observed that... 他评论说…\n\n## 真题语境\n\n> All participants must strictly **observe** the experiment protocol.\n> 所有参与者必须严格遵守实验规程。\n\n## 同义替换\n\ncomply with / abide by / adhere to / follow\n\n## 辨析\n\nobserver 观察者；observation 观察/遵守\n完形高频：observe vs. conserve(保存) vs. preserve(保护) vs. reserve(预留)"
+  },
+  {
+   "id": "ev-014",
+   "q": "subject (to) 的熟词僻义",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "熟词僻义",
+    "s开头"
+   ],
+   "a": "## 卡片\n\n**subject**　/ˈsʌbdʒɪkt/（n./adj.）　/səbˈdʒekt/（v.）\n\n| 词性/搭配 | 释义 |\n| --- | --- |\n| n. | 主题；学科；**实验对象**；臣民 |\n| **be subject to** | **易遭受…的；受…支配的**（adj. 高频） |\n| subject A to B | 使 A 经受 B（v.） |\n\n## 真题短语\n\n- **be subject to** criticism/tax 易受批评/纳税\n- be subject to change 可能变动（以实际为准）\n- subjects of the experiment 实验对象\n- subject... to rigorous tests 使…经受严格测试\n\n## 真题语境\n\n> Children are more **subject to** infectious diseases.\n> 儿童更容易患传染病。\n\n## 同义替换\n\nbe prone to / be liable to / be vulnerable to / be exposed to\n\n## 记忆\n\nsub(下面) + ject(投掷，同 project/reject) → 被扔到下面 → 受制于"
+  },
+  {
+   "id": "ev-015",
+   "q": "develop 的熟词僻义",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "熟词僻义",
+    "d开头"
+   ],
+   "a": "## 卡片\n\n**develop**　/dɪˈveləp/\n\n| 常见义 | 考研义（高频！） |\n| --- | --- |\n| v. 发展 | **v. 患（病），出现（症状）** |\n| | v. 养成（习惯）；培养（兴趣/能力） |\n| | v. 冲洗（胶卷）；研发 |\n\n## 真题短语\n\n- **develop cancer** 患癌症（develop + 疾病 = 得病）\n- develop a habit of... 养成…习惯\n- develop symptoms 出现症状\n- develop an interest in 培养对…的兴趣\n\n## 真题语境\n\n> Long-term smokers are more likely to **develop** lung disease.\n> 长期吸烟者更易患肺病。\n\n## 同义替换（患病义）\n\ncontract / suffer from / be afflicted with\n\n## 派生\n\ndevelopment 发展；developing countries 发展中国家；developed 发达的\n完形陷阱：develop a disease≠发展疾病，是\"患病\""
+  },
+  {
+   "id": "ev-016",
+   "q": "sound 的熟词僻义",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "熟词僻义",
+    "s开头"
+   ],
+   "a": "## 卡片\n\n**sound**\n\n| 词性 | 释义 |\n| --- | --- |\n| n. | 声音 |\n| v. | 听起来（系动词，+ adj.） |\n| **adj.** | **健全的，合理的；可靠的；完好的**（高频！） |\n\n## 真题短语\n\n- **sound advice/reasoning** 可靠的建议/合理的推理\n- sound logic 严密的逻辑\n- safe and sound 安然无恙\n- sound sleep 酣睡\n- The idea sounds good. 听起来不错\n\n## 真题语境\n\n> The committee gave several **sound** suggestions.\n> 委员会提出了几条中肯的建议。\n\n## 同义替换（adj. 义）\n\nreasonable / solid / reliable / valid / sensible\n\n## 提醒\n\n阅读中 sound + 抽象名词（theory/advice/judgment）= \"可靠的\"，不是\"声音的\""
+  },
+  {
+   "id": "ev-017",
+   "q": "boost",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "核心词",
+    "b开头",
+    "写作词"
+   ],
+   "a": "## 卡片\n\n**boost**　/buːst/　v. & n.\n\nv. 促进，提高，增强；n. 增长，提升；激励\n\n## 真题短语\n\n- boost the economy/promotion 促进经济/促销\n- boost confidence 增强信心\n- boost sales 提升销量\n- give sb. a boost 助某人一臂之力\n\n## 真题语境\n\n> The tax cuts are designed to **boost** consumer spending.\n> 减税旨在刺激消费支出。\n\n## 同义替换\n\npromote / enhance / increase / stimulate / elevate\n\n## 写作模板（图表作文上升描述）\n\nThe number of X **boosted dramatically** from... to...\n替换 rise sharply，避免全文一个 increase\n注意：boost 是及物动词为主，\"数量上涨\"更常用 increase/rocket/jump"
+  },
+  {
+   "id": "ev-018",
+   "q": "fluctuate / soar / plunge 数据描述词族",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "写作词",
+    "图表",
+    "f开头"
+   ],
+   "a": "## 卡片\n\n图表作文数据描述必备四词：\n\n| 词 | 音标 | 释义 |\n| --- | --- | --- |\n| fluctuate | /ˈflʌktʃueɪt/ | v. 波动（fluctuation n.） |\n| soar | /sɔː/ | v. 猛增，飙升（不及物） |\n| plunge | /plʌndʒ/ | v. 骤降，暴跌（不及物） |\n| plateau | /ˈplætəʊ/ | v./n. 趋于平稳；平台期 |\n\n## 写作模板句\n\n- The figure **fluctuated** between 20% and 35%.（在…间波动）\n- Sales **soared** from 100 to 1,000 units.（从…飙升到…）\n- The rate **plunged** to a historic low.（骤降至历史低点）\n- Growth **plateaued** after 2019.（2019 年后趋于平稳）\n\n## 搭配副词（程度）\n\ndramatically / sharply / significantly / steadily / slightly / gradually\n\n## 真题语境\n\n> Oil prices **fluctuated** wildly throughout the year.\n> 全年油价剧烈波动。\n\n替换链：rise→soar/surge/rocket；fall→plunge/plummet/drop；stay→plateau/level off"
+  }
+ ]
+}

@@ -1,0 +1,138 @@
+{
+ "track": "job",
+ "id": "mq",
+ "name": "消息队列",
+ "badge": "MQ",
+ "color": "#A65A8A",
+ "desc": "Kafka / RabbitMQ / 可靠性 / 幂等",
+ "questions": [
+  {
+   "id": "mq-001",
+   "q": "为什么用消息队列？它解决了什么问题、又带来了什么问题？",
+   "a": "## 一句话结论\n\nMQ 三大价值：**解耦**（上下游不直接依赖）、**异步**（非核心链路旁路）、**削峰**（流量缓冲在队列）；代价是系统可用性依赖 MQ、一致性变复杂、需要处理重复与顺序。\n\n## 价值与代价\n\n| 价值 | 例子 |\n| --- | --- |\n| 解耦 | 订单系统不直接调积分/短信，发事件即可 |\n| 异步 | 下单后发券、通知异步做，接口 RT 从 800ms 降到 80ms |\n| 削峰 | 秒杀 10 万 QPS 进队列，下游按 2 千 QPS 消费 |\n\n| 代价 | 对策 |\n| --- | --- |\n| 可用性 | MQ 集群高可用、降级开关 |\n| 一致性 | 事务消息/本地消息表/对账 |\n| 重复消费 | 幂等设计 |\n| 顺序问题 | 分区键/单队列/业务容忍 |\n| 排查难 | 全链路 traceId 透传 |\n\n## 面试追问\n\n- 追问：什么场景不该用 MQ？\n  答：强一致同步返回的场景、调用方必须立即知道结果的、量小且稳定的内部调用。\n- 追问：MQ 和 RPC 异步化的区别？\n  答：RPC 异步仍点对点强依赖；MQ 有缓冲与多订阅方。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "MQ",
+    "解耦",
+    "削峰",
+    "异步"
+   ],
+   "r": [
+    "mq-002",
+    "mq-004"
+   ]
+  },
+  {
+   "id": "mq-002",
+   "q": "Kafka 的架构是怎样的？topic、partition、consumer group 的关系？",
+   "a": "## 一句话结论\n\nKafka = 分布式提交日志：topic 分多个 partition（有序、可并行），每条消息有 offset；**consumer group 内一个 partition 只被一个消费者消费**，group 的 offset 记录消费进度，group 间互不影响。\n\n## 核心概念\n\n1. **Broker**：Kafka 节点\n2. **Topic**：逻辑分类\n3. **Partition**：物理有序日志，副本机制（leader/follower，ISR）\n4. **Offset**：partition 内单调递增序号，消费位点\n5. **Consumer Group**：一组消费者共同消费 topic，rebalance 分配 partition\n6. **Producer**：按 key hash 选 partition（保证同 key 同分区有序）\n\n## 关系图\n\n```text\ntopic: order\n ├── p0 → groupA.consumer1\n ├── p1 → groupA.consumer1\n ├── p2 → groupA.consumer2\n └── (groupB 独立从头消费)\n```\n\n## 关键性质\n\n1. partition 内有序，全局无序\n2. 消费者数 > partition 数时多余消费者空闲\n3. 扩 partition 会改变 key 的路由（慎重）\n4. 副本同步：acks=all 时 leader 等 ISR 全部写入\n\n## 面试追问\n\n- 追问：rebalance 什么时候触发？\n  答：组成员变化、订阅 topic 变化、partition 变化；期间消费暂停，要避免频繁 rebalance（心跳/处理超时）。\n- 追问：Kafka 为什么快？\n  答：顺序写盘 + 页缓存 + 零拷贝 sendfile + 批量压缩 + 分区并行。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "Kafka",
+    "partition",
+    "consumer group",
+    "offset"
+   ],
+   "r": [
+    "mq-001",
+    "mq-003"
+   ]
+  },
+  {
+   "id": "mq-003",
+   "q": "怎么保证消息不丢失？从生产、Broker、消费三段说？",
+   "a": "## 一句话结论\n\n三段防线：生产端 acks=all + 重试 + 本地兜底表；Broker 端副本 ≥3、min.insync.replicas=2、刷盘策略权衡；消费端**手动提交 offset + 处理成功才 ack + 死信兜底**，任何一段单点都会丢。\n\n## 生产端\n\n1. acks=all（0 会丢、1 _leader 挂可能丢）\n2. retries + 幂等 producer（enable.idempotence）防重\n3. 发送失败落本地表/告警，定时补偿\n4. RabbitMQ 对应：publisher confirm + 持久化队列\n\n## Broker 端\n\n1. replication.factor ≥ 3，min.insync.replicas = 2\n2. unclean.leader.election.enable=false（不允许非 ISR 当 leader）\n3. 刷盘：Kafka 靠副本+页缓存（异步刷盘），RabbitMQ 需队列与消息都持久化\n\n## 消费端\n\n1. 手动提交：enable.auto.commit=false，业务成功后 commitSync\n2. 先处理再提交 vs 先提交再处理：选前者，配合幂等容忍重复\n3. 消费失败重试 N 次进死信队列，人工/定时补偿\n4. RabbitMQ：basicNack(requeue=false) + DLX\n\n## 面试追问\n\n- 追问：acks=all 就绝对不丢吗？\n  答：配合 min.insync.replicas=2 才有效；若 ISR 只剩 leader，all 退化为 1。\n- 追问：消费端\"至少一次\"和\"恰好一次\"？\n  答：Kafka 事务 + 幂等可做到 EOS（exactly-once semantics），跨系统仍需业务幂等。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "消息可靠性",
+    "ack",
+    "手动提交",
+    "副本"
+   ],
+   "r": [
+    "mq-002",
+    "mq-004"
+   ]
+  },
+  {
+   "id": "mq-004",
+   "q": "消息重复消费怎么解决？说说幂等的几种实现？",
+   "a": "## 一句话结论\n\n重复不可避免（重试/重平衡），**消费端必须幂等**：唯一键去重表、数据库唯一约束、状态机校验、Redis setnx 令牌、乐观锁版本号，选一种与业务匹配的即可。\n\n## 幂等方案\n\n| 方案 | 适用 | 说明 |\n| --- | --- | --- |\n| 唯一索引 | 插入类 | 重复插入报 DuplicateKey 捕获即成功 |\n| 去重表 | 通用 | msgId 唯一键，先插去重表再业务（同事务） |\n| 状态机 | 订单/支付 | 只允许 PENDING→PAID，重复消息状态不符直接丢弃 |\n| Redis setnx | 轻量 | setnx(msgId,1,ex) 成功才处理；注意 Redis 故障窗口 |\n| 乐观锁 | 更新类 | update ... where version=#{v}，影响行数 0 即重复 |\n| 业务天然幂等 | 查询/覆盖写 | set 语义无需处理 |\n\n## 去重表示例\n\n```sql\nCREATE TABLE mq_dedup (\n  msg_id VARCHAR(64) PRIMARY KEY,\n  biz_id VARCHAR(64), created_at DATETIME\n);\n-- 与业务写同一本地事务：插去重表成功才继续\n```\n\n## 面试追问\n\n- 追问：去重表会不会无限涨？\n  答：按 biz 保留周期清理（如 7 天），消息重投窗口通常小于此。\n- 追问：Redis 去重的风险？\n  答：Redis 挂了或主从切换丢 key 会重复；关键资金类用 DB 唯一约束兜底。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "幂等",
+    "去重",
+    "唯一键"
+   ],
+   "r": [
+    "mq-003"
+   ]
+  },
+  {
+   "id": "mq-005",
+   "q": "怎么保证消息的顺序消费？",
+   "a": "## 一句话结论\n\n全局有序用单 partition/单队列（牺牲并行）；**局部有序用业务键做分区键**（同订单进同分区），消费端同分区单线程处理，重试时不能打乱顺序（暂停该分区或进重试队列排队）。\n\n## 三层保证\n\n1. **生产**：key = orderId 路由到固定 partition\n2. **Broker**：partition 内 FIFO\n3. **消费**：\n   - Kafka：一个 partition 只给组内一个消费者，单线程 poll 处理\n   - 多线程消费：内存中按 key 分桶，桶内串行\n   - RocketMQ：MessageQueueSelector + 顺序消费监听器（失败阻塞重试不跳过）\n\n## 重试与顺序的冲突\n\n1. 失败立即重试会阻塞后续（RocketMQ 顺序消息语义）\n2. Kafka 手动管理：失败不提交 offset，原地重试或暂停 partition\n3. 折中：业务允许的最终一致 + 版本号/时间戳判新旧\n\n## 面试追问\n\n- 追问：扩 partition 会破坏顺序吗？\n  答：会，同 key 可能换分区；扩容前要消费完存量或接受短暂乱序。\n- 追问：真的需要全局顺序吗？\n  答：多数业务只需实体级顺序；全局顺序是性能杀手，先质疑需求。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "顺序消费",
+    "分区键",
+    "单线程"
+   ],
+   "r": [
+    "mq-002"
+   ]
+  },
+  {
+   "id": "mq-006",
+   "q": "消息积压了怎么处理？紧急扩容的思路是什么？",
+   "a": "## 一句话结论\n\n先止血（查消费端为何慢/挂）→ 临时扩容消费者到 partition 数 → 仍不够就**新建 topic 加 partition，原消费者只转发不处理** → 事后复盘补监控（积压量、消费 lag 告警）。\n\n## 排查顺序\n\n1. 消费端是否挂了/线程池满/GC/下游慢（DB、RPC）\n2. 是否 rebalance 风暴（频繁重平衡导致不消费）\n3. 是否单 partition 热点（key 分布不均）\n4. 是否毒消息（一直重试卡住）→ 死信隔离\n\n## 紧急扩容\n\n1. 消费者数 ≤ partition 数才有效，先扩 partition（Kafka 可增加）\n2. 转发模式：原 group 消费者改为\"读→写新 topic（partition 更多）\"，新 group 大并发消费新 topic\n3. 降级：非核心消费逻辑先关（如只落库不发通知）\n4. 跳过：确认业务允许后重置 offset 跳过积压（慎用，需补偿）\n\n## 预防\n\n1. 监控 lag（consumer lag）告警阈值\n2. 消费端限流保护下游\n3. 压测消费能力，partition 数预留\n4. 毒消息进死信，不阻塞主流程\n\n## 面试追问\n\n- 追问：重置 offset 会丢消息吗？\n  答：跳过的部分等于丢，需事后从存储/对账补。\n- 追问：转发模式有什么代价？\n  答：多一跳延迟与一份存储，恢复后要切回原链路。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "消息积压",
+    "扩容",
+    "消费能力"
+   ],
+   "r": [
+    "mq-002",
+    "mq-003"
+   ]
+  },
+  {
+   "id": "mq-007",
+   "q": "Kafka、RabbitMQ、RocketMQ 怎么选型？",
+   "a": "## 一句话结论\n\n大数据流/日志/高吞吐选 Kafka；业务消息、灵活路由与延迟队列选 RabbitMQ；电商级业务消息（事务消息、顺序、回溯）选 RocketMQ；**团队已有哪个、运维能力如何往往比纸面参数更决定选型**。\n\n## 对比\n\n| 维度 | Kafka | RabbitMQ | RocketMQ |\n| --- | --- | --- | --- |\n| 吞吐 | 百万级/s | 万级/s | 十万级/s |\n| 延迟 | ms | µs~ms | ms |\n| 顺序 | 分区有序 | 队列有序 | 分区/全局顺序 |\n| 事务消息 | 有（EOS） | 无（publisher confirm） | 有（半消息，业务友好） |\n| 延迟队列 | 无原生（时间轮自己造） | 原生（TTL+DLX） | 原生（4.x 定时级别/5.x 任意） |\n| 消息回溯 | 按 offset/时间 | 不支持 | 按时间回溯 |\n| 生态 | 大数据标配 | AMQP 标准 | 阿里系/国内业务 |\n\n## 场景映射\n\n1. 埋点、日志、CDC、流计算 → Kafka\n2. 企业内部集成、路由复杂、小规模 → RabbitMQ\n3. 交易、订单、需要事务消息与回溯 → RocketMQ\n4. 云原生轻量 → 云厂商托管（Pulsar 亦可评估）\n\n## 面试追问\n\n- 追问：RocketMQ 事务消息原理？\n  答：发半消息 → 执行本地事务 → commit/rollback；未决时 Broker 回查本地事务状态。\n- 追问：Pulsar 的优势？\n  答：存算分离（BookKeeper）、多租户、跨地域复制；运维复杂度更高。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "选型",
+    "Kafka",
+    "RocketMQ",
+    "RabbitMQ"
+   ],
+   "r": [
+    "mq-001"
+   ]
+  },
+  {
+   "id": "mq-008",
+   "q": "延迟队列怎么实现？各方案对比？",
+   "a": "## 一句话结论\n\n四种实现：RabbitMQ TTL+死信交换器（简单但队头阻塞）、RocketMQ 定时级别/5.x 任意延迟、Redis zset 按时间戳轮询（轻量）、**时间轮/Netty HashedWheelTimer（进程内）**；按延迟精度与量级选。\n\n## 方案对比\n\n| 方案 | 精度 | 量级 | 坑 |\n| --- | --- | --- | --- |\n| RabbitMQ TTL+DLX | 秒 | 中 | 同队列不同 TTL 队头阻塞 → 用插件 rabbitmq_delayed_message_exchange |\n| RocketMQ | 级别固定(4.x)/任意(5.x) | 大 | 4.x 只有 18 个级别 |\n| Redis zset | 秒 | 中 | 轮询间隔=精度；集群要分布式锁或分片 |\n| 时间轮 | 毫秒 | 进程内 | 重启丢失，需持久化兜底 |\n| DB 扫表 | 分钟 | 小 | 简单可靠，量大不行 |\n\n## Redis zset 骨架\n\n```text\nZADD delay_queue <executeTimestamp> <msgId>\n-- 轮询：ZRANGEBYSCORE delay_queue 0 now LIMIT 0 100 → 处理 → ZREM\n```\n\n## 面试追问\n\n- 追问：订单 30 分钟未支付取消用哪种？\n  答：RocketMQ 延迟消息/Redis zset/RabbitMQ 插件均可；关键是要有兜底扫表防消息丢失。\n- 追问：时间轮为什么高效？\n  答：O(1) 插入与触发，按 tick 推进槽位，避免优先队列 O(log n)。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "延迟队列",
+    "死信",
+    "时间轮"
+   ],
+   "r": [
+    "mq-007"
+   ]
+  }
+ ]
+}

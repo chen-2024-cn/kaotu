@@ -1,0 +1,135 @@
+{
+ "track": "job",
+ "id": "network",
+ "name": "计算机网络",
+ "badge": "网",
+ "color": "#2E8B8B",
+ "desc": "TCP / HTTP(S) / 状态码 / 跨域",
+ "questions": [
+  {
+   "id": "network-001",
+   "q": "TCP 三次握手的过程？为什么是三次不是两次？",
+   "a": "## 一句话结论\n\n三次握手 = 双方各确认一次\"对方的收发能力 + 初始序号\"：SYN → SYN+ACK → ACK；**两次只能确认服务端收到，无法让服务端确认客户端的接收能力，且历史失效连接会误建**。\n\n## 过程\n\n1. 客户端 SYN(seq=x)，进入 SYN_SENT\n2. 服务端 SYN+ACK(seq=y, ack=x+1)，进入 SYN_RCVD\n3. 客户端 ACK(ack=y+1)，双方 ESTABLISHED\n\n## 为什么三次\n\n1. 确认双方收发能力：第一次证明客户端发 OK；第二次证明服务端收+发 OK；第三次证明客户端收 OK\n2. 同步双方 ISN（初始序号），防止历史重复连接的数据混入\n3. 两次的问题：服务端无法确认客户端已收到 SYN+ACK，若客户端已死，服务端资源白等；且网络滞留的旧 SYN 会让服务端误开连接\n\n## 状态与资源\n\n- 服务端半连接队列（SYN queue）存 SYN_RCVD\n- 全连接队列（accept queue）存已完成握手待 accept 的\n- SYN flood 攻击打满半连接队列 → syncookies 防御\n\n## 面试追问\n\n- 追问：ISN 为什么随机？\n  答：防序号预测攻击 + 防旧连接报文被新连接误收。\n- 追问：同时打开（双方同时发 SYN）会怎样？\n  答：各发 SYN+ACK 后进入 ESTABLISHED，仍算三次交互但报文四条。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "TCP",
+    "三次握手",
+    "同步序号"
+   ],
+   "r": [
+    "network-002"
+   ]
+  },
+  {
+   "id": "network-002",
+   "q": "TCP 四次挥手的过程？为什么挥手要四次、握手只要三次？",
+   "a": "## 一句话结论\n\n挥手：FIN → ACK → FIN → ACK；因为 TCP 全双工，**收到对方 FIN 只代表对方不发数据了，自己可能还有数据要发，所以 ACK 和自身的 FIN 要分开发**；主动方最后等 2MSL 的 TIME_WAIT 保证结尾 ACK 可达。\n\n## 过程\n\n1. 主动方 FIN(seq=u)，FIN_WAIT_1\n2. 被动方 ACK，CLOSE_WAIT（被动方还可继续发数据）；主动方 FIN_WAIT_2\n3. 被动方数据发完发 FIN，LAST_ACK\n4. 主动方 ACK，TIME_WAIT（等 2MSL=60s）→ CLOSED；被动方收到 ACK 即 CLOSED\n\n## TIME_WAIT 的意义\n\n1. 保证最后一个 ACK 丢失时对方能重发 FIN 并重收 ACK\n2. 让旧连接的滞留报文在网络中消亡，不污染新连接\n\n## 状态异常排查\n\n1. 大量 CLOSE_WAIT：被动方没调 close（代码漏关连接/线程池占着）\n2. 大量 TIME_WAIT：主动方高频短连接 → 复用连接、调 tcp_tw_reuse（仅客户端安全）\n\n## 面试追问\n\n- 追问：为什么握手可以合并 SYN+ACK 而挥手不能合并 ACK+FIN？\n  答：握手时服务端收到 SYN 后本来就要回 ACK 且暂无数据要发；挥手时服务端收到 FIN 时往往还有数据未发完，ACK 与 FIN 时机不同。\n- 追问：2MSL 为什么是 2 倍？\n  答：最后一个 ACK 的单程 + 对方可能重发 FIN 的单程。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "四次挥手",
+    "TIME_WAIT",
+    "CLOSE_WAIT"
+   ],
+   "r": [
+    "network-001"
+   ]
+  },
+  {
+   "id": "network-003",
+   "q": "HTTP/1.1、HTTP/2、HTTP/3 的核心区别？",
+   "a": "## 一句话结论\n\n1.1 靠长连接+管道化（有队头阻塞）；2 用**二进制分帧 + 多路复用 + 头部压缩 + 服务端推送**解决应用层队头阻塞，但 TCP 层丢包仍阻塞；3 换 QUIC（UDP）彻底解决传输层队头阻塞并内置 TLS、0-RTT。\n\n## 逐代演进\n\n| 版本 | 关键特性 | 遗留问题 |\n| --- | --- | --- |\n| 1.0 | 短连接 | 每请求建连 |\n| 1.1 | 持久连接、管道化、Host | 管道化响应必须有序=队头阻塞 |\n| 2 | 分帧、多路复用、HPACK、推送、服务器优先级 | TCP 丢包重传阻塞所有流 |\n| 3 | QUIC(UDP)、流独立可靠、0/1-RTT、连接迁移 |  UDP 被某些网络限速/屏蔽 |\n\n## HTTP/2 多路复用\n\n1. 连接内分 stream，帧乱序到达按 stream id 组装\n2. 头部 HPACK：静态表+动态表+哈夫曼，消冗余\n3. 一个域名一条连接，不再靠域名分片 hack\n\n## QUIC 收益\n\n1. 流级可靠：一个流丢包不阻塞其它流\n2. 握手 1-RTT（含 TLS1.3），恢复 0-RTT\n3. 连接 ID 迁移：换 Wi-Fi 不断连\n\n## 面试追问\n\n- 追问：服务端推送为什么被弃用？\n  答：缓存协调复杂、收益不稳定，Chrome 已移除；HTTP/3 规范删除。\n- 追问：HTTPS 在 HTTP/2 里是必须的吗？\n  答：规范没强制，但浏览器只支持 over TLS（h2）。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "HTTP2",
+    "HTTP3",
+    "多路复用",
+    "QUIC"
+   ],
+   "r": [
+    "network-004"
+   ]
+  },
+  {
+   "id": "network-004",
+   "q": "HTTPS 的握手过程？对称加密和非对称加密怎么配合？",
+   "a": "## 一句话结论\n\nTLS 握手用**非对称/密钥交换算法安全地协商出对称会话密钥**，之后用对称加密传数据（性能）；证书链验证服务器身份，防中间人；TLS 1.3 把握手压到 1-RTT 并移除不安全算法。\n\n## TLS 1.2 握手\n\n1. ClientHello：随机数1、支持的套件\n2. ServerHello：随机数2、选定套件、**证书**、（RSA 时）ServerHelloDone\n3. 客户端验证书链 → 生成预主密钥，用服务器公钥加密发送（RSA）；或 ECDHE 交换参数\n4. 双方用 随机数1+随机数2+预主密钥 推导会话密钥\n5. Finished 消息验证握手完整性\n\n## TLS 1.3 改进\n\n1. 只保留 ECDHE 等前向安全套件（RSA 密钥交换移除）\n2. 1-RTT 握手，会话恢复 0-RTT\n3. 加密更多握手消息\n\n## 为什么混合加密\n\n- 非对称：安全交换密钥，但慢（比对称慢 3 个数量级）\n- 对称：快，但密钥分发难\n- 结合：非对称只用于握手那一下\n\n## 证书验证\n\n1. 链式验证到受信任根 CA\n2. 有效期、域名匹配、吊销（CRL/OCSP，现多用 OCSP Stapling）\n3. 前向安全：即使服务器私钥日后泄露，历史会话也无法解密（ECDHE）\n\n## 面试追问\n\n- 追问：中间人能伪造证书吗？\n  答：不能，没有 CA 私钥签不出可信证书；但若用户机器被装恶意根证书则失守。\n- 追问：0-RTT 的风险？\n  答：重放攻击，幂等请求才能用 0-RTT。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "HTTPS",
+    "TLS",
+    "证书",
+    "握手"
+   ],
+   "r": [
+    "network-003"
+   ]
+  },
+  {
+   "id": "network-005",
+   "q": "在浏览器地址栏输入 URL 到页面显示，经历了什么？",
+   "a": "## 一句话结论\n\nURL 解析 → DNS 递归/迭代查询（浏览器缓存→系统→hosts→递归服务器）→ 建 TCP（+TLS）→ 发 HTTP 请求 → 服务器处理返回 → 浏览器解析 HTML 构建 DOM/CSSOM → 合成渲染树布局绘制 → 执行 JS 可能再触发请求与重排。\n\n## 全链路\n\n1. **DNS**：浏览器缓存 → OS 缓存 → hosts → 本地 DNS → 根/顶级/权威迭代\n2. **连接**：TCP 三次握手；HTTPS 再 TLS 握手；HTTP/3 走 QUIC\n3. **请求**：GET 带 Cookie/缓存头；可能先经过代理/CDN/网关\n4. **响应**：304 协商缓存或 200 强缓存命中则不传体\n5. **渲染**：HTML→DOM，CSS→CSSOM，合并 Render Tree → Layout → Paint → Composite\n6. **JS**：script 阻塞解析（defer/async 缓解），执行可能改 DOM 触发重排\n7. **后续**：子资源请求、预加载、Service Worker 拦截\n\n## 关键优化点\n\n1. DNS 预解析 dns-prefetch\n2. 连接复用 keep-alive / HTTP2 多路复用\n3. 缓存策略：强缓存 Cache-Control + 协商缓存 ETag\n4. CDN 就近、资源压缩、关键 CSS 内联\n\n## 面试追问\n\n- 追问：重排和重绘区别？\n  答：重排是几何变化重新布局（贵），重绘是外观变化；重排必重绘，反之不必然。\n- 追问：Service Worker 在哪一步介入？\n  答：网络请求发出前，可拦截返回缓存（fetch 事件）。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "URL",
+    "DNS",
+    "渲染",
+    "全链路"
+   ],
+   "r": [
+    "network-004",
+    "network-001"
+   ]
+  },
+  {
+   "id": "network-006",
+   "q": "常见 HTTP 状态码有哪些？301、302、304、307、308 的区别？",
+   "a": "## 一句话结论\n\n1xx 信息、2xx 成功、3xx 重定向、4xx 客户端错、5xx 服务端错；**301 永久（可缓存、方法可变 GET）、302 临时（历史上被浏览器改成 GET）、307 临时且保持方法、308 永久且保持方法、304 协商缓存未修改**。\n\n## 高频码\n\n| 码 | 含义 | 备注 |\n| --- | --- | --- |\n| 200 | 成功 | |\n| 201 | 已创建 | POST 建资源 |\n| 204 | 无内容 | DELETE 成功 |\n| 301 | 永久重定向 | 浏览器缓存，SEO 传权重 |\n| 302 | 临时重定向 | 规范禁止改方法，现实常改 GET |\n| 303 | 见其它 | 明确改 GET |\n| 304 | 未修改 | 协商缓存命中，无 body |\n| 307/308 | 临时/永久且保持方法与 body | 302/301 的严格版 |\n| 400 | 请求错误 | 参数校验失败 |\n| 401 | 未认证 | 需带凭证 |\n| 403 | 无权限 | 认证了但没授权 |\n| 404 | 不存在 | |\n| 405 | 方法不允许 | |\n| 409 | 冲突 | 幂等冲突/版本冲突 |\n| 429 | 太多请求 | 限流 |\n| 500 | 服务器内部错误 | |\n| 502 | 网关收到无效响应 | 上游挂了 |\n| 503 | 服务不可用 | 过载/维护，配 Retry-After |\n| 504 | 网关超时 | 上游慢 |\n\n## 面试追问\n\n- 追问：401 和 403 怎么记？\n  答：401 = 你是谁（没登录），403 = 你不行（登录了没权限）。\n- 追问：304 需要哪些头配合？\n  答：请求 If-None-Match/If-Modified-Since，响应带 ETag/Last-Modified。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "状态码",
+    "重定向",
+    "缓存"
+   ],
+   "r": [
+    "network-005"
+   ]
+  },
+  {
+   "id": "network-007",
+   "q": "浏览器缓存机制是怎样的？强缓存和协商缓存怎么配合？",
+   "a": "## 一句话结论\n\n先查强缓存（Cache-Control/Expires，命中不发请求）→ 未命中发协商缓存（If-None-Match/If-Modified-Since，304 则用本地）→ 都没有才全量下载；**静态资源用长 max-age + 文件名 hash，HTML 用 no-cache 保证入口新鲜**。\n\n## 缓存决策流\n\n```text\n请求 → 强缓存有效? ─是→ 200 (from disk/memory cache)\n            └否→ 带验证头请求 → 304? ─是→ 用本地\n                                  └否→ 200 新内容\n```\n\n## 关键头\n\n| 头 | 作用 |\n| --- | --- |\n| Cache-Control: max-age=31536000 | 强缓存一年 |\n| Cache-Control: no-cache | 必须协商验证 |\n| Cache-Control: no-store | 完全不存 |\n| Expires | HTTP/1.0 绝对时间（被 max-age 覆盖） |\n| ETag / If-None-Match | 内容指纹验证（精确） |\n| Last-Modified / If-Modified-Since | 时间验证（秒级精度） |\n\n## 工程实践\n\n1. JS/CSS/图片：contenthash 文件名 + max-age=1y，immutable\n2. index.html：no-cache（或短 max-age），保证发版即生效\n3. API：默认 no-store；幂等 GET 可短缓存\n4. CDN 层与浏览器层策略分开设计\n\n## 面试追问\n\n- 追问：from memory cache 和 from disk cache 区别？\n  答：内存快但进程退出即失；磁盘持久；浏览器按资源类型与大小调度。\n- 追问：用户强制刷新（Ctrl+F5）会怎样？\n  答：忽略强缓存直接发请求（且通常不带验证头，要全量）。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "缓存",
+    "Cache-Control",
+    "ETag"
+   ],
+   "r": [
+    "network-006"
+   ]
+  },
+  {
+   "id": "network-008",
+   "q": "跨域是怎么产生的？CORS 和 JSONP 的原理与区别？",
+   "a": "## 一句话结论\n\n同源策略（协议+域名+端口）限制 JS 读取跨源响应；**CORS 是浏览器与服务器约定的头机制**（简单请求直接发+响应头放行，复杂请求先 OPTIONS 预检）；JSONP 利用 script 标签不受限的老 hack，只支持 GET 且不安全。\n\n## 简单请求 vs 预检\n\n1. 简单：GET/HEAD/POST + 简单头 + 简单 Content-Type → 直接发，靠响应 Access-Control-Allow-Origin 放行\n2. 预检：方法/头/类型不满足 → 先 OPTIONS，服务器回 Allow-Methods/Allow-Headers/Max-Age，通过才发真请求\n\n## 关键头\n\n```text\n响应: Access-Control-Allow-Origin: https://a.com   (或 *，但与凭证互斥)\n      Access-Control-Allow-Credentials: true       (带 Cookie 时必须)\n      Access-Control-Allow-Methods / Headers / Max-Age\n请求: Origin / Access-Control-Request-Method(预检)\n```\n\n## 携带 Cookie 的条件\n\n1. 前端 xhr.withCredentials / fetch credentials:'include'\n2. 服务端 Allow-Credentials: true\n3. Allow-Origin 不能为 *\n\n## 其它跨域手段\n\n1. JSONP：script src 跨源，回调函数名约定；XSS 风险、仅 GET\n2. 代理：开发期 devServer.proxy、生产 Nginx 反代（浏览器看来同源）\n3. postMessage：窗口间通信\n4. WebSocket：不受同源策略限制\n\n## 面试追问\n\n- 追问：跨域是服务器拦的还是浏览器拦的？\n  答：请求发出去了、服务器也回了，是**浏览器**拒绝把响应给 JS；所以 curl/服务端调用无跨域问题。\n- 追问：OPTIONS 预检请求太多怎么优化？\n  答：Access-Control-Max-Age 缓存预检结果；或把接口设计成简单请求；或同域代理。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "跨域",
+    "CORS",
+    "预检",
+    "JSONP"
+   ],
+   "r": [
+    "network-006"
+   ]
+  }
+ ]
+}

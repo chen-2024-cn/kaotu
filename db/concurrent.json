@@ -1,0 +1,198 @@
+{
+ "track": "job",
+ "id": "concurrent",
+ "name": "并发编程",
+ "badge": "并",
+ "color": "#2F6F8F",
+ "desc": "synchronized / AQS / 线程池 / JUC",
+ "questions": [
+  {
+   "id": "concurrent-001",
+   "q": "线程的生命周期有哪几种状态？和操作系统线程状态怎么对应？",
+   "a": "## 一句话结论\n\nJava 线程有 6 种状态：NEW、RUNNABLE、BLOCKED、WAITING、TIMED_WAITING、TERMINATED；**Java 的 RUNNABLE 合并了操作系统的 Ready 和 Running**，因为 JVM 不区分这两者。\n\n## 六状态与触发条件\n\n| 状态 | 进入条件 |\n| --- | --- |\n| NEW | new 出来未 start |\n| RUNNABLE | start 后（含就绪+运行） |\n| BLOCKED | 等 synchronized 监视器锁 |\n| WAITING | wait() / join() / LockSupport.park()，无超时 |\n| TIMED_WAITING | sleep(ms) / wait(ms) / join(ms) / parkNanos |\n| TERMINATED | run 结束或抛异常 |\n\n## 关键区分\n\n1. BLOCKED vs WAITING：BLOCKED 是等**锁**，WAITING 是等**其它线程的动作**（notify/结束）\n2. sleep 不释放锁，wait 释放锁\n3. jstack 里看到的 os 状态与 java 状态是两层，java 层 BLOCKED 在 os 层通常是 waiting on monitor entry\n\n## 面试追问\n\n- 追问：start() 和 run() 区别？\n  答：start 创建新线程并由 JVM 调 run；直接调 run 只是普通方法调用，在当前线程执行。\n- 追问：线程能重启吗？\n  答：不能，TERMINATED 后再 start 抛 IllegalThreadStateException。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "线程状态",
+    "生命周期",
+    "Thread"
+   ],
+   "r": [
+    "concurrent-002"
+   ]
+  },
+  {
+   "id": "concurrent-002",
+   "q": "synchronized 的锁升级过程是怎样的？偏向锁为什么被废弃？",
+   "a": "## 一句话结论\n\n锁从低到高：无锁 → 偏向锁 → 轻量级锁（CAS 自旋）→ 重量级锁（Monitor），**只升不降**；偏向锁因维护成本高于收益，JDK 15 起默认关闭、JDK 18 彻底移除。\n\n## 升级链路\n\n1. **偏向锁**：第一个线程进入时在 Mark Word 记线程 ID，之后该线程进出无需 CAS；其它线程来则撤销偏向\n2. **轻量级锁**：有竞争时升级为 CAS 自旋（自适应自旋，JDK 6+），线程栈里存 Lock Record\n3. **重量级锁**：自旋失败/竞争者多，膨胀为 ObjectMonitor，未获得线程进 EntryList 阻塞（内核态切换）\n\n## 为什么只升不降\n\n降级需要全局安全点协调，成本高且收益小；竞争一旦出现，通常不会回到单线程状态。\n\n## 偏向锁废弃原因\n\n1. 现代应用多线程竞争是常态，偏向撤销（revoke）要走到安全点，STW 代价大\n2. 撤销逻辑复杂，是 JVM 代码的维护负担与 bug 源\n3. 实测关闭偏向对多数应用无性能损失\n\n## Monitor 结构\n\n- EntryList：阻塞等待的线程\n- WaitSet：调了 wait 的线程\n- Owner：当前持锁线程\n- 重入靠 counter 计数\n\n## 面试追问\n\n- 追问：synchronized 和 ReentrantLock 区别？\n  答：后者可中断、可超时、可公平、可多条件变量；前者 JVM 内置、自动释放、有锁升级优化。\n- 追问：字符串常量做锁对象有什么问题？\n  答：常量池共享，不同模块可能锁同一对象造成意外阻塞；用 private final Object 做锁。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "synchronized",
+    "锁升级",
+    "偏向锁",
+    "Monitor"
+   ],
+   "r": [
+    "concurrent-003",
+    "jvm-002"
+   ]
+  },
+  {
+   "id": "concurrent-003",
+   "q": "volatile 的作用和原理？它能保证原子性吗？",
+   "a": "## 一句话结论\n\nvolatile 保证**可见性 + 有序性（禁止重排）**，不保证原子性；原理是锁前缀指令 + 内存屏障，写后强制刷主存并使其它 CPU 缓存行失效。\n\n## 三大特性对照\n\n| 特性 | volatile | synchronized |\n| --- | --- | --- |\n| 可见性 | ✅ | ✅ |\n| 有序性 | ✅ | ✅ |\n| 原子性 | ❌（i++ 不安全） | ✅ |\n\n## 底层原理\n\n1. 写 volatile：lock addl $0x0,(rsp) 触发缓存一致性协议（MESI），其它核该行失效\n2. 内存屏障：StoreStore / StoreLoad 等屏障禁止指令重排\n3. 经典应用：双重检查锁单例的 instance、状态标志位、ConcurrentHashMap 的 table\n\n## 为什么 i++ 不安全\n\ni++ 是读-改-写三步，volatile 只保证每步的可见性，两步之间仍可能被插队；用 AtomicInteger 或加锁。\n\n## 面试追问\n\n- 追问：happens-before 里 volatile 规则是什么？\n  答：对 volatile 变量的写先于后续对它的读，传递性地保证之前所有写对读线程可见。\n- 追问：volatile 数组元素有 volatile 语义吗？\n  答：没有，只有引用本身；元素级原子用 AtomicReferenceArray 或 VarHandle。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "volatile",
+    "可见性",
+    "有序性",
+    "内存屏障"
+   ],
+   "r": [
+    "concurrent-004"
+   ]
+  },
+  {
+   "id": "concurrent-004",
+   "q": "CAS 是什么？ABA 问题怎么解决？",
+   "a": "## 一句话结论\n\nCAS = Compare And Swap，CPU 级原子指令 cmpxchg：期望值等于内存值才写入新值；ABA 问题用**版本号/ stamped 标记**解决（AtomicStampedReference）。\n\n## CAS 三要素\n\n1. 内存地址 V、期望值 A、新值 B\n2. V == A 才写 B，返回是否成功；失败则自旋重试\n3. Unsafe.compareAndSwapInt / VarHandle.compareAndSet\n\n## 三大问题\n\n| 问题 | 说明 | 对策 |\n| --- | --- | --- |\n| ABA | 值 A→B→A，CAS 误判成功 | AtomicStampedReference 带版本号 |\n| 自旋开销 | 长期失败空转 CPU | 自适应自旋/退避、限制重试 |\n| 只能保护一个变量 | 多变量不原子 | AtomicReference 包对象 / 锁 |\n\n## 应用\n\n- AtomicInteger/LongAdder\n- AQS 的 state 变更\n- ConcurrentHashMap 桶头写入\n\n## 面试追问\n\n- 追问：LongAdder 为什么比 AtomicLong 快？\n  答：Cell[] 分散热点，base + cells 求和，减少单点 CAS 竞争；但 sum 非实时精确。\n- 追问：Java 里怎么直接写 CAS？\n  答：JDK 9+ 用 VarHandle（推荐），之前用 Unsafe（不推荐）。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "CAS",
+    "ABA",
+    "Atomic",
+    "乐观锁"
+   ],
+   "r": [
+    "concurrent-003"
+   ]
+  },
+  {
+   "id": "concurrent-005",
+   "q": "AQS 的原理是什么？说说 state 和 CLH 队列？",
+   "a": "## 一句话结论\n\nAQS 用 volatile int state 表示资源 + **变体 CLH 双向队列**管理等待线程，模板方法把\"获取/释放\"骨架固定，子类只需实现 tryAcquire/tryRelease 决定公平性与共享/独占。\n\n## 核心结构\n\n1. **state**：独占锁=重入次数；共享锁=可用许可数（Semaphore）；CountDownLatch=剩余计数\n2. **队列**：FIFO 双向链表，head 是持锁者（或哨兵），节点 waitStatus 记录状态（SIGNAL/CANCELLED/CONDITION/PROPAGATE）\n3. **获取失败入队**：addWaiter 挂到队尾，shouldParkAfterFailedAcquire 把前驱设为 SIGNAL 后 park 自己\n4. **释放唤醒**：unparkSuccessor 唤醒后继\n\n## 模板方法\n\n```java\nacquire()      → tryAcquire() 失败 → addWaiter → acquireQueued(自旋+park)\nrelease()      → tryRelease() 成功 → unparkSuccessor\nacquireShared / releaseShared 同理（CountDownLatch、Semaphore）\n```\n\n## 谁在用 AQS\n\nReentrantLock、Semaphore、CountDownLatch、ReadWriteLock（Sync）、ThreadPoolExecutor 的 Worker（简化版）。\n\n## 面试追问\n\n- 追问：公平锁和非公平锁在 AQS 里差在哪？\n  答：tryAcquire 时公平锁先 hasQueuedPredecessors() 检查队列，非公平直接 CAS 抢。\n- 追问：Condition 怎么实现的？\n  答：每个 Condition 一个等待队列，await 把节点从 AQS 队列移到条件队列并释放锁，signal 再移回 AQS 队列竞争。",
+   "d": 5,
+   "f": "high",
+   "t": [
+    "AQS",
+    "CLH",
+    "ReentrantLock",
+    "同步器"
+   ],
+   "r": [
+    "concurrent-004",
+    "concurrent-006"
+   ]
+  },
+  {
+   "id": "concurrent-006",
+   "q": "线程池的七个参数分别是什么？任务提交的完整流程？",
+   "a": "## 一句话结论\n\n七参数 = corePoolSize、maximumPoolSize、keepAliveTime、unit、workQueue、threadFactory、handler；流程是**核心线程 → 队列 → 最大线程 → 拒绝策略**，顺序千万别记反。\n\n## 七参数\n\n| 参数 | 作用 |\n| --- | --- |\n| corePoolSize | 常驻核心线程数 |\n| maximumPoolSize | 上限（含核心） |\n| keepAliveTime + unit | 非核心线程空闲存活时间 |\n| workQueue | 任务队列（Linked/Array/Synchronous/Priority） |\n| threadFactory | 命名线程，便于排查 |\n| handler | 拒绝策略 |\n\n## execute 流程\n\n1. 线程数 < core：addWorker 建核心线程执行\n2. 否则 offer 入队；入队成功但发现线程数为 0（核心被回收）则补一个非核心\n3. 入队失败且 < max：addWorker 非核心线程\n4. 仍失败：执行拒绝策略\n\n## 四种拒绝策略\n\n- AbortPolicy（默认）抛 RejectedExecutionException\n- CallerRunsPolicy 调用者线程执行（降速不丢）\n- DiscardPolicy 静默丢弃\n- DiscardOldestPolicy 丢队头再重试\n\n## 队列选择\n\n- LinkedBlockingQueue 无界 → 最大线程数形同虚设，**OOM 风险**\n- ArrayBlockingQueue 有界 → 推荐，配合 CallerRuns 削峰\n- SynchronousQueue 不存任务 → 直接开线程，适合 CachedPool 语义\n\n## 面试追问\n\n- 追问：为什么不用 Executors 快捷方法？\n  答：newFixed/Single 用无界 Linked 队列会 OOM；newCached 最大线程 Integer.MAX_VALUE 会创建海量线程。阿里规范禁用。\n- 追问：核心线程能回收吗？\n  答：默认不能；allowCoreThreadTimeOut(true) 后可以。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "线程池",
+    "ThreadPoolExecutor",
+    "拒绝策略"
+   ],
+   "r": [
+    "concurrent-005",
+    "concurrent-007"
+   ]
+  },
+  {
+   "id": "concurrent-007",
+   "q": "线程池大小怎么定？CPU 密集和 IO 密集的区别？",
+   "a": "## 一句话结论\n\nCPU 密集 ≈ N+1（N 为核数），IO 密集 ≈ N × (1 + 等待时间/计算时间)；**公式只是起点，真实容量靠压测 + 监控迭代**，且要按下游依赖拆分池。\n\n## 经典公式\n\n```text\nCPU 密集：threads = NCPU + 1        （+1 应对偶发缺页中断）\nIO 密集： threads = NCPU × (1 + W/C)  W=等待 C=计算\n```\n\n## 工程修正\n\n1. 队列有界 + 拒绝策略兜底，防止无限堆积\n2. 按依赖隔离：DB 池、RPC 池、异步通知池分开，避免慢依赖拖垮全部\n3. 监控队列长度、活跃线程、拒绝次数，动态调整（如美团动态线程池思路）\n4. 上下文切换成本：线程过多反而降吞吐，用 jstat/vmstat 看 cs 次数\n\n## 示例\n\n8 核，任务 90% 时间在等 DB：threads ≈ 8 × (1+9) = 80，但 DB 连接池只有 20 → 实际受限于 20，线程池设 24~32 即可。\n\n## 面试追问\n\n- 追问：线程池任务能拿到返回值吗？\n  答：submit + Future/CompletableFuture；execute 无返回。\n- 追问：线程池会预热吗？\n  答：默认核心线程按需创建；prestartAllCoreThreads 可预热。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "线程池",
+    "容量规划",
+    "压测"
+   ],
+   "r": [
+    "concurrent-006"
+   ]
+  },
+  {
+   "id": "concurrent-008",
+   "q": "ThreadLocal 的原理？为什么会内存泄漏、怎么避免？",
+   "a": "## 一句话结论\n\n每个 Thread 持有一个 ThreadLocalMap，key 是 ThreadLocal 弱引用、value 强引用；**线程池复用线程时不 remove 就会泄漏**，规范是 try-finally remove。\n\n## 结构\n\n```text\nThread\n └── threadLocals: ThreadLocalMap\n        └── Entry[] : key=ThreadLocal(弱引用), value=Object(强引用)\n```\n\n1. set/get 以当前 ThreadLocal 为 key 直接定位（hash 用 0x61c88647 黄金分割）\n2. 冲突用线性探测\n3. key 被 GC 后 Entry 的 key=null，但 value 仍被 Entry 强引用 → 泄漏源\n\n## 泄漏场景\n\n线程池线程长期存活 → ThreadLocalMap 不回收 → key 已死 value 还在 → 越积越多。\n\n## 正确姿势\n\n```java\ntry {\n    CTX.set(user);\n    ...业务...\n} finally {\n    CTX.remove();   // 必须\n}\n```\n\n## 其它坑\n\n1. 父子线程不传递 → 用 TransmittableThreadLocal（阿里开源）或 InheritableThreadLocal（仅新建线程有效）\n2.  SimpleDateFormat 放 ThreadLocal 是经典用法\n3. 虚拟线程（JDK 21）下 ThreadLocal 成本更高，推荐 ScopedValue\n\n## 面试追问\n\n- 追问：为什么 key 用弱引用？\n  答：若强引用，ThreadLocal 变量置 null 后 Map 仍持有，更彻底泄漏；弱引用至少让 key 可回收，配合 expungeStaleEntry 清理。\n- 追问：ThreadLocalMap 的 hash 冲突怎么处理？\n  答：线性探测，向后找空槽。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "ThreadLocal",
+    "内存泄漏",
+    "ThreadLocalMap"
+   ],
+   "r": [
+    "jvm-010"
+   ]
+  },
+  {
+   "id": "concurrent-009",
+   "q": "CountDownLatch、CyclicBarrier、Semaphore 的区别和场景？",
+   "a": "## 一句话结论\n\nCountDownLatch 一次性倒计时（等 N 件事完成）、CyclicBarrier 可循环的集合点（N 个线程互相等）、Semaphore 限流许可证（控制并发数）；三者都基于 AQS。\n\n## 对比\n\n| 工具 | 计数方向 | 复用 | 典型场景 |\n| --- | --- | --- | --- |\n| CountDownLatch | 减到 0 | 不可 | 主线程等 N 个子任务汇总 |\n| CyclicBarrier | 加到 N | 可 reset 复用 | 多线程分阶段计算，阶段间同步 |\n| Semaphore | 许可增减 | 可 | 限流、连接池获取 |\n\n## 代码骨架\n\n```java\nCountDownLatch latch = new CountDownLatch(3);\npool.submit(() -> { ...; latch.countDown(); });\nlatch.await();            // 主线程阻塞直到 0\n\nSemaphore sem = new Semaphore(10);\nsem.acquire();            // 拿许可，没有则阻塞\ntry { callRpc(); } finally { sem.release(); }\n```\n\n## 面试追问\n\n- 追问：CountDownLatch 能重复用吗？\n  答：不能，到 0 后永远为 0；需要重复用 CyclicBarrier 或 Phaser。\n- 追问：Phaser 是什么？\n  答：JDK 7 的分阶段同步器，支持动态注册/注销与多阶段，CyclicBarrier 的增强版。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "JUC",
+    "CountDownLatch",
+    "Semaphore",
+    "CyclicBarrier"
+   ],
+   "r": [
+    "concurrent-005"
+   ]
+  },
+  {
+   "id": "concurrent-010",
+   "q": "什么是 happens-before？它和可见性、重排序的关系？",
+   "a": "## 一句话结论\n\nhappens-before 是 JMM 定义的\"前一个操作的结果对后一个操作可见\"的偏序规则；**编译器/CPU 只保证不违反 happens-before 的重排**，它是理解并发正确性的总纲。\n\n## 核心规则\n\n1. 程序顺序规则：单线程内前面的操作 hb 后面的\n2. 监视器锁规则：unlock hb 后续对同一锁的 lock\n3. volatile 规则：写 hb 后续读\n4. 传递性：a hb b，b hb c ⇒ a hb c\n5. 线程启动规则：start() hb 线程内任何动作\n6. 线程终止/中断/终结规则同理\n\n## 与重排的关系\n\n- as-if-serial：单线程语义不变即可重排\n- 跨线程只要不破坏 hb 关系，重排自由\n- 所以\"看起来乱序\"不是 bug，破坏 hb 才是 bug\n\n## 示例\n\n```java\n// 经典 DCL 为什么必须 volatile\ninstance = new Obj();   // 非原子：分配→初始化→引用赋值，2、3 可能重排\n// 没 volatile 时另一线程可能拿到未初始化完的对象\n```\n\n## 面试追问\n\n- 追问：volatile 能替代锁吗？\n  答：只能替代\"单一变量可见性+有序性\"场景，复合操作仍需锁或原子类。",
+   "d": 4,
+   "f": "mid",
+   "t": [
+    "happens-before",
+    "JMM",
+    "内存模型"
+   ],
+   "r": [
+    "concurrent-003"
+   ]
+  },
+  {
+   "id": "concurrent-011",
+   "q": "死锁的四个必要条件是什么？怎么预防和排查？",
+   "a": "## 一句话结论\n\n死锁四条件：互斥、持有并等待、不可剥夺、循环等待；**破坏循环等待最实用——全局统一加锁顺序**；排查用 jstack 看 deadlock 报告或 jconsole。\n\n## 四条件与破坏方式\n\n| 条件 | 破坏方式 |\n| --- | --- |\n| 互斥 | 一般不可破坏（锁的本质） |\n| 持有并等待 | 一次性申请全部资源 |\n| 不可剥夺 | tryLock 超时放弃已持有的 |\n| 循环等待 | 资源编号，按序加锁 |\n\n## 排查\n\n```bash\njstack <pid> | grep -A 20 'Found .* deadlock'\n# 或 jconsole / VisualVM 的线程页签直接看死锁图\n```\n\n## 工程预防\n\n1. 锁顺序规范化：文档 + Code Review\n2. 缩小锁粒度、缩短持锁时间（锁内不做 IO/RPC）\n3. tryLock(timeout) 代替 lock()\n4. 避免锁嵌套：能拆就拆，或用无锁结构\n\n## 面试追问\n\n- 追问：活锁和饥饿区别？\n  答：活锁是线程都在动但没进展（互相谦让）；饥饿是低优先级线程长期拿不到资源。\n- 追问：数据库死锁和 JVM 死锁一样吗？\n  答：原理同源（循环等待），但 DB 有死锁检测会自动回滚一方，JVM 不会自动解开。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "死锁",
+    "锁顺序",
+    "排查"
+   ],
+   "r": [
+    "concurrent-002"
+   ]
+  },
+  {
+   "id": "concurrent-012",
+   "q": "CompletableFuture 怎么用？和 Future 比解决了什么问题？",
+   "a": "## 一句话结论\n\nFuture 只能阻塞 get、不能组合；CompletableFuture 提供**链式编排、组合、异常处理、自定义线程池**，是异步编程的事实标准。\n\n## Future 的痛\n\n1. get 阻塞，无法回调\n2. 多任务无法组合（thenCombine/allOf 缺失）\n3. 无异常传播链，异常被包成 ExecutionException\n4. 不能手动完成\n\n## 常用编排\n\n```java\nCompletableFuture.supplyAsync(this::queryUser, pool)\n    .thenCompose(u -> CompletableFuture.supplyAsync(() -> queryOrder(u.id), pool))\n    .thenCombine(priceFuture, (order, price) -> build(order, price))\n    .exceptionally(ex -> fallback(ex))\n    .whenComplete((r, e) -> log(r, e));\n\nCompletableFuture.allOf(f1, f2, f3).join();  // 并行聚合\n```\n\n## 关键方法族\n\n- 变换：thenApply / thenCompose（flatMap）/ thenCombine\n- 消费：thenAccept / thenRun\n- 组合：allOf / anyOf\n- 异常：exceptionally / handle / whenComplete\n- 手动：complete / completeExceptionally\n\n## 坑\n\n1. 默认用 ForkJoinPool.commonPool，**IO 任务必须传自定义池**，否则饿死公共池\n2. thenApply 与 thenApplyAsync 区别：前者可能在完成线程同步执行\n3. 忘记 join/get 结果被丢弃且异常静默\n\n## 面试追问\n\n- 追问：allOf 怎么拿所有结果？\n  答：allOf 返回 Void，需再 stream 各 future join 收集。\n- 追问：超时怎么控制？\n  答：JDK 9+ orTimeout / completeOnTimeout；之前用 scheduled 任务 complete。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "CompletableFuture",
+    "异步编排",
+    "Future"
+   ],
+   "r": [
+    "concurrent-007"
+   ]
+  }
+ ]
+}

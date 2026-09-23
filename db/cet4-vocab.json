@@ -1,0 +1,162 @@
+{
+ "track": "cet4",
+ "id": "cet4-vocab",
+ "name": "四级高频词",
+ "badge": "词汇",
+ "color": "#7A5AA8",
+ "desc": "核心动词形容词 · 易混辨析 · 一词一卡",
+ "questions": [
+  {
+   "id": "c4v-001",
+   "q": "acquire",
+   "a": "## 卡片\n\n**acquire**　/əˈkwaɪə/　v.\n\n获得，购得；学到（知识/技能）\n\n## 常考搭配\n\n- acquire knowledge/skills 获得知识/技能\n- acquire a habit 养成习惯\n- acquire a company 收购公司\n\n## 真题语境\n\n> Children **acquire** language at an amazing speed.\n> 儿童以惊人的速度习得语言。\n\n## 同义替换\n\nobtain / gain / attain（辨析：acquire 强调 gradual 逐渐获得）\n\n## 记忆\n\nac(加强) + quire(追求，同 require/inquire) → 努力求得 → 获得。四级翻译\"学到知识\"首选。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "a开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-002",
+   "q": "anticipate",
+   "a": "## 卡片\n\n**anticipate**　/ænˈtɪsɪpeɪt/　v.\n\n预期，预料；提前处理\n\n## 常考搭配\n\n- anticipate that... 预料到…\n- anticipate doing 预计做\n- as anticipated 如所料\n\n## 真题语境\n\n> The project was completed ahead of schedule, **anticipating** all our worries.\n> 项目提前完成，消除了我们所有的担忧。\n\n## 同义替换\n\nexpect / foresee / predict\n\n## 记忆\n\nanti(先) + cip(抓拿，同 accept/receive) → 先抓到手 → 预料、抢先。+ doing 不接 to do。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "a开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-003",
+   "q": "considerable",
+   "a": "## 卡片\n\n**considerable**　/kənˈsɪdərəbl/　adj.\n\n相当大的，可观的（数量/程度）\n\n## 常考搭配\n\n- considerable effort/influence 相当大的努力/影响\n- a considerable amount of 大量的\n- considerable progress 长足进步\n\n## 真题语境\n\n> The new policy has attracted **considerable** attention.\n> 新政策引起了相当大的关注。\n\n## 同义替换\n\nsubstantial / significant / sizable\n\n## 记忆\n\n**易混词对（四级完形必考）**：considerable 相当大的（量）vs. considerate 体贴的（人）。-able 想成\"可计量的\"→量大。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "易混",
+    "c开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-004",
+   "q": "essential",
+   "a": "## 卡片\n\n**essential**　/ɪˈsenʃəl/　adj. / n.\n\n绝对必要的，必不可少的；（复数）要素，必需品\n\n## 常考搭配\n\n- be essential to/for 对…必不可少\n- It is essential that + (should) do 虚拟语气\n- the essentials of... …的要素\n\n## 真题语境\n\n> Water is **essential** to all forms of life.\n> 水对一切生命形式都是必不可少的。\n\n## 同义替换\n\nvital / indispensable / crucial\n\n## 记忆\n\nessence(本质) + ial → 涉及本质的 → 必要的。注意 that 从句用虚拟：It is essential that he (should) be informed.",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "虚拟语气",
+    "e开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-005",
+   "q": "maintain",
+   "a": "## 卡片\n\n**maintain**　/meɪnˈteɪn/　v.\n\n维持，保持；维修；主张\n\n## 常考搭配\n\n- maintain order/balance 维持秩序/平衡\n- maintain that... 坚称…\n- maintain a car 保养汽车\n\n## 真题语境\n\n> He still **maintains** that he made the right decision.\n> 他仍坚称自己做了正确的决定。\n\n## 同义替换\n\nretain(保留) / sustain(支撑) / uphold(维护) / assert(主张)\n\n## 记忆\n\nmain(手，同 manual) + tain(拿住，同 contain/retain) → 用手一直拿着 → 维持。\"主张\"义在阅读中高频。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "一词多义",
+    "m开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-006",
+   "q": "potential",
+   "a": "## 卡片\n\n**potential**　/pəˈtenʃl/　adj. / n.\n\n潜在的，可能的；潜力，潜能\n\n## 常考搭配\n\n- potential risk/customer 潜在风险/客户\n- fulfill/realize one's potential 发挥潜力\n- the potential to do 做…的潜力\n\n## 真题语境\n\n> Every child has the **potential** to succeed.\n> 每个孩子都有成功的潜力。\n\n## 同义替换\n\npossible / latent（adj.）；capacity / capability（n.）\n\n## 记忆\n\npot(能力，同 power/potent) + ential → 有力量的状态 → 潜力。形容词+名词双词性是四级选词填空常客。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "p开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-007",
+   "q": "previous",
+   "a": "## 卡片\n\n**previous**　/ˈpriːviəs/　adj.\n\n以前的，先前的\n\n## 常考搭配\n\n- previous experience 既往经验\n- the previous day/year 前一天/上一年\n- on previous occasions 在以前的场合\n\n## 真题语境\n\n> The job requires two years of **previous** work experience.\n> 这份工作需要两年的相关工作经验。\n\n## 同义替换\n\nformer / prior / preceding（反义 subsequent 随后的）\n\n## 记忆\n\npre(前) + vi(路，同 via 经由) + ous → 走在前面的 → 先前的。派生 previously(adv.)。",
+   "d": 1,
+   "f": "high",
+   "t": [
+    "高频词",
+    "p开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-008",
+   "q": "promote",
+   "a": "## 卡片\n\n**promote**　/prəˈməʊt/　v.\n\n促进，推动；促销；提拔\n\n## 常考搭配\n\n- promote cooperation/development 促进合作/发展\n- promote sales 促销\n- be promoted to manager 被提拔为经理\n\n## 真题语境\n\n> Sports help to **promote** understanding between nations.\n> 体育有助于促进国家间的相互了解。\n\n## 同义替换\n\nboost / advance / facilitate / upgrade\n\n## 记忆\n\npro(向前) + mot(动，同 motion/motor) → 向前推动 → 促进。三个义项（促进/促销/晋升）四级轮流考。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "一词多义",
+    "p开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-009",
+   "q": "significant",
+   "a": "## 卡片\n\n**significant**　/sɪɡˈnɪfɪkənt/　adj.\n\n重要的，重大的；显著的\n\n## 常考搭配\n\n- significant progress/changes 重大进展/变化\n- a significant increase 显著增长\n- be significant to/for 对…重要\n\n## 真题语境\n\n> The discovery is of great **significance** to medical research.\n> 这一发现对医学研究意义重大。\n\n## 同义替换\n\nimportant / remarkable / notable / considerable\n\n## 记忆\n\nsign(记号) + ific(做) + ant → 值得做个记号的 → 重要的。名 significance：be of great significance = very important（写作升级表达）。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "写作词",
+    "s开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-010",
+   "q": "sustain",
+   "a": "## 卡片\n\n**sustain**　/səˈsteɪn/　v.\n\n维持，支撑；遭受\n\n## 常考搭配\n\n- sustainable development 可持续发展\n- sustain economic growth 维持经济增长\n- sustain heavy losses 遭受重创\n\n## 真题语境\n\n> The economy failed to **sustain** its rapid growth.\n> 经济未能维持其快速增长。\n\n## 同义替换\n\nmaintain / support / endure / undergo\n\n## 记忆\n\nsus(=sub 下面) + tain(拿住) → 从下面托住 → 支撑。**sustainable development 是四级翻译第一高频固定搭配**。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "翻译词",
+    "s开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-011",
+   "q": "tendency",
+   "a": "## 卡片\n\n**tendency**　/ˈtendənsi/　n.\n\n趋势，倾向\n\n## 常考搭配\n\n- a tendency to/toward (doing) sth 做…的倾向\n- a growing tendency 日增长的趋势\n- the tendency of... …的趋势\n\n## 真题语境\n\n> There is a growing **tendency** for young people to work from home.\n> 年轻人居家办公的趋势日益增长。\n\n## 同义替换\n\ntrend / inclination / tendency\n\n## 记忆\n\ntend(伸展/趋向) + ency → 倾向。搭配动词：show/develop/reverse a tendency。图表作文描述趋势必用。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "高频词",
+    "写作词",
+    "t开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4v-012",
+   "q": "yield",
+   "a": "## 卡片\n\n**yield**　/jiːld/　v. / n.\n\n出产，产生；屈服；产量，收益\n\n## 常考搭配\n\n- yield results/profits 产生结果/利润\n- yield to pressure 屈服于压力\n- crop yields 农作物产量\n\n## 真题语境\n\n> The research has **yielded** some surprising results.\n> 这项研究得出了一些惊人的结果。\n\n## 同义替换\n\nproduce / generate（产出义）；submit / give in（屈服义）\n\n## 记忆\n\n一词三考：①产出（学术文常见）②屈服 yield to ③名词产量。写作替换 produce 的好词。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "一词多义",
+    "y开头"
+   ],
+   "r": []
+  }
+ ]
+}

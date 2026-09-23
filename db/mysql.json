@@ -1,0 +1,206 @@
+{
+ "track": "job",
+ "id": "mysql",
+ "name": "MySQL",
+ "badge": "My",
+ "color": "#2E7D6B",
+ "desc": "索引 / 事务 / MVCC / 锁 / SQL 优化",
+ "questions": [
+  {
+   "id": "mysql-001",
+   "q": "为什么 InnoDB 选择 B+ 树而不是 B 树或红黑树做索引？",
+   "a": "## 一句话结论\n\nB+ 树\"矮胖 + 叶子链表\"：非叶子节点不存数据只存键，单页能放更多索引项，树更矮 IO 更少；叶子节点双向链表天然支持范围查询与排序。\n\n## 逐一对比\n\n| 结构 | 问题 |\n| --- | --- |\n| 红黑树/AVL | 二叉，树高 log2(n)，百万数据约 20 层 = 20 次 IO |\n| B 树 | 非叶子也存数据，单页索引项少，树变高；范围查询要中序遍历 |\n| B+ 树 | 非叶子只存键（16KB 页约放 1170 个键），3 层可存 2000 万+ 行；叶子链表顺序扫 |\n| Hash | 等值 O(1) 但不支持范围、排序、最左前缀 |\n\n## 关键数字\n\n1. 页大小 16KB，非叶子节点约存 16KB/14B ≈ 1170 个指针\n2. 3 层 B+ 树 ≈ 1170 × 1170 × 16 行 ≈ 2000 万行，查询 3 次 IO\n3. 根节点与内层节点常驻 buffer pool，实际 IO 更少\n\n## 其它细节\n\n- 聚簇索引叶子存整行，二级索引叶子存主键值（回表来源）\n- 自增主键让聚簇索引顺序追加，减少页分裂\n\n## 面试追问\n\n- 追问：为什么不用跳表？\n  答：跳表内存友好（Redis 用），但磁盘场景层级不可控且范围扫描指针跳跃多；B+ 树扇出高更省 IO。\n- 追问：页分裂是什么？\n  答：页满插入时拆成两页并调整父节点，随机主键加剧分裂；自增主键可避免。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "索引",
+    "B+树",
+    "InnoDB",
+    "磁盘IO"
+   ],
+   "r": [
+    "mysql-002",
+    "mysql-003"
+   ]
+  },
+  {
+   "id": "mysql-002",
+   "q": "聚簇索引和二级索引的区别？什么是回表和覆盖索引？",
+   "a": "## 一句话结论\n\n聚簇索引叶子节点就是整行数据（一表一个，InnoDB 按主键组织）；二级索引叶子存主键值，**查询列不在索引里就要回表**；让 SELECT 列全在索引内即覆盖索引，免回表。\n\n## 结构对比\n\n```text\n聚簇索引:  主键 → [整行数据]\n二级索引:  索引列 → [主键值] → 再查聚簇索引(回表)\n```\n\n## 回表与覆盖\n\n1. `SELECT * FROM t WHERE name='x'`：走 name 二级索引拿到 id，再回聚簇索引取整行 = 回表\n2. `SELECT id, name FROM t WHERE name='x'`：索引里就有 id 和 name = 覆盖索引，explain 的 Extra 显示 Using index\n3. 优化手段：把高频查询列加入联合索引（索引列不宜过宽）\n\n## 无主键时 InnoDB 怎么办\n\n1. 选第一个非空唯一索引当聚簇键\n2. 都没有则生成 6 字节隐藏 row_id\n\n## 面试追问\n\n- 追问：为什么二级索引不直接存行指针？\n  答：行地址会因页分裂/整理而变化，存主键值稳定；代价是回表。\n- 追问：覆盖索引和索引下推区别？\n  答：ICP 是在存储引擎层用索引过滤减少回表次数；覆盖是根本不用回表。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "聚簇索引",
+    "二级索引",
+    "回表",
+    "覆盖索引"
+   ],
+   "r": [
+    "mysql-001",
+    "mysql-004"
+   ]
+  },
+  {
+   "id": "mysql-003",
+   "q": "什么是最左前缀原则？哪些写法会导致索引失效？",
+   "a": "## 一句话结论\n\n联合索引 (a,b,c) 只能从 a 开始连续匹配：a、a+b、a+b+c 可用，b 或 b+c 不可用；**对索引列做函数/运算、隐式类型转换、前导模糊 like '%x'、or 混非索引列、不等号断链**都会失效。\n\n## 失效清单\n\n| 写法 | 原因 |\n| --- | --- |\n| `where b=1`（索引 a,b,c） | 跳过了 a |\n| `where a=1 and c=3` | c 断链，只用到 a（8.0 索引跳跃扫描除外） |\n| `where f(a)=1` | 对列做函数，无法定位 |\n| `where a+1=5` | 对列做运算 |\n| `where phone='138...'` 而 phone 是 varchar 传了数字 | 隐式转换 = 对列做函数 |\n| `like '%abc'` | 前导通配无法走 B+ 树有序性 |\n| `where a=1 or b=2`（b 无索引） | 优化器放弃索引走全表 |\n| `!=`、`not in` 在大表 | 选择性差时优化器选全表 |\n| 字符集不一致的 join | 隐式转换 |\n\n## 验证方法\n\n```sql\nEXPLAIN SELECT ... ;   -- 看 type、key、Extra\n-- type: system>const>eq_ref>ref>range>index>ALL\n-- Extra: Using index(覆盖) / Using filesort(需优化) / Using temporary(危险)\n```\n\n## 设计建议\n\n1. 区分度高的列放前面\n2. 等值列在前、范围列在后（范围列后面的列用不上）\n3. 用 explain 验证每条高频 SQL\n\n## 面试追问\n\n- 追问：`where a>1 and b=2` 用得上 b 吗？\n  答：a 走 range，b 在 8.0 前用不上索引过滤（只能回表后过滤）；8.0 的 ICP 可在引擎层过滤。\n- 追问：order by 能走索引吗？\n  答：排序列与索引顺序一致且方向一致时可免 filesort。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "最左前缀",
+    "索引失效",
+    "联合索引"
+   ],
+   "r": [
+    "mysql-001",
+    "mysql-006"
+   ]
+  },
+  {
+   "id": "mysql-004",
+   "q": "事务的 ACID 是什么？InnoDB 怎么保证的？",
+   "a": "## 一句话结论\n\nACID = 原子性、一致性、隔离性、持久性；InnoDB 用 **undo log 保原子、redo log 保持久、锁 + MVCC 保隔离、三者共同保一致**。\n\n## 逐项落地\n\n| 特性 | 实现 |\n| --- | --- |\n| 原子性 | undo log：记录反向操作，崩溃/回滚时逆序撤销 |\n| 持久性 | redo log：WAL 先写日志再写页，崩溃重做；innodb_flush_log_at_trx_commit 控制刷盘 |\n| 隔离性 | 锁（写写）+ MVCC（读写不阻塞） |\n| 一致性 | 前三者 + 约束（主键/外键/唯一）共同保证，是目标不是手段 |\n\n## redo vs undo\n\n1. redo：物理日志，记\"页 X 偏移 Y 写入值 Z\"，保证已提交事务不丢\n2. undo：逻辑日志，记\"insert 的反面是 delete\"，保证未提交可回滚 + 提供 MVCC 旧版本\n\n## 两阶段提交\n\nredo 与 binlog 用 2PC 保证一致：prepare → 写 binlog → commit，崩溃恢复时按 binlog 补全。\n\n## 面试追问\n\n- 追问：binlog 和 redo log 区别？\n  答：binlog 是 Server 层逻辑日志、追加写、用于主从/备份；redo 是引擎层物理日志、循环写、用于崩溃恢复。\n- 追问：一致性是数据库保证的还是应用保证的？\n  答：数据库保证机制层面的一致（约束+ACID），业务语义一致（如转账总额不变）靠应用事务边界设计。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "ACID",
+    "redo",
+    "undo",
+    "事务"
+   ],
+   "r": [
+    "mysql-005",
+    "mysql-007"
+   ]
+  },
+  {
+   "id": "mysql-005",
+   "q": "四种隔离级别分别解决什么问题？RR 级别下幻读真的解决了吗？",
+   "a": "## 一句话结论\n\nRU 有脏读、RC 有不可重复读、RR 靠 MVCC + 间隙锁基本解决幻读、Serializable 全加锁最安全最慢；**RR 的快照读不幻读，但当前读在间隙锁保护下也基本不幻读，特殊交叉场景仍可能出现**。\n\n## 级别与问题\n\n| 级别 | 脏读 | 不可重复读 | 幻读 |\n| --- | --- | --- | --- |\n| READ UNCOMMITTED | 可能 | 可能 | 可能 |\n| READ COMMITTED | 否 | 可能 | 可能 |\n| REPEATABLE READ | 否 | 否 | InnoDB 基本否 |\n| SERIALIZABLE | 否 | 否 | 否 |\n\n## InnoDB 的 RR 怎么防幻读\n\n1. **快照读**：MVCC read view 在第一次读时创建，之后一致，看不到新插入行\n2. **当前读**（select ... for update / update / delete）：Next-Key Lock = 记录锁 + 间隙锁，锁住范围防插入\n\n## 仍会\"幻读\"的交叉场景\n\n```sql\n-- 事务A: select * from t where id=5 for update;  -- 不存在\n-- 事务B: insert into t values(5,...); commit;     -- 被间隙锁阻塞? 若A先快照读过则B可插入成功\n-- 事务A: insert into t values(5,...);              -- 主键冲突!\n```\n快照与当前读混用时会出现\"看不见却插不进\"的怪象。\n\n## 面试追问\n\n- 追问：MySQL 默认级别？\n  答：RR；多数互联网业务用 RC +  binlog row 格式，减少锁范围。\n- 追问：间隙锁什么时候没有？\n  答：唯一索引等值命中记录时退化为记录锁；RC 级别无间隙锁（除唯一性检查）。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "隔离级别",
+    "幻读",
+    "RR",
+    "间隙锁"
+   ],
+   "r": [
+    "mysql-004",
+    "mysql-006"
+   ]
+  },
+  {
+   "id": "mysql-006",
+   "q": "MVCC 的实现原理？read view 和 undo 版本链怎么配合？",
+   "a": "## 一句话结论\n\n每行隐藏 trx_id 与 roll_pointer 指向 undo 旧版本形成版本链；事务读时拿 read view（活跃事务列表），沿链找到**第一个对自己可见**的版本，实现读写不阻塞。\n\n## 三要素\n\n1. **隐藏列**：DB_TRX_ID（最后修改事务）、DB_ROLL_PTR（回滚指针）、DB_ROW_ID\n2. **undo 版本链**：每次修改把旧值写 undo，roll_pointer 串成链\n3. **read view**：m_ids=读时活跃事务集合、min_trx_id、max_trx_id+1、creator_trx_id\n\n## 可见性判断\n\n对版本链上某版本的 trx_id：\n1. < min：已提交，可见\n2. ≥ max+1：读之后开启，不可见\n3. 在 [min, max] 内：在 m_ids 中=未提交不可见，不在=已提交可见\n4. 不可见则沿链找更旧版本\n\n## RC 与 RR 的区别\n\n- RC：每次 SELECT 都新建 read view → 能读到别人已提交的新值\n- RR：事务内第一次 SELECT 建 view 后复用 → 可重复读\n\n## 面试追问\n\n- 追问：MVCC 能解决写写冲突吗？\n  答：不能，写写靠锁；MVCC 只解决读写互相阻塞。\n- 追问：purge 线程干什么？\n  答：清理不再被任何 read view 需要的 undo 版本，回收空间。",
+   "d": 5,
+   "f": "high",
+   "t": [
+    "MVCC",
+    "read view",
+    "undo版本链",
+    "隐藏列"
+   ],
+   "r": [
+    "mysql-005",
+    "mysql-004"
+   ]
+  },
+  {
+   "id": "mysql-007",
+   "q": "InnoDB 的锁有哪些？记录锁、间隙锁、临键锁分别锁什么？",
+   "a": "## 一句话结论\n\nInnoDB 行级锁三种粒度：Record Lock 锁单行、Gap Lock 锁索引区间（防插入）、Next-Key Lock = Record + Gap（左开右闭）；**RR 级别当前读默认 Next-Key，命中唯一索引等值时降级为 Record**。\n\n## 锁类型全景\n\n| 锁 | 粒度 | 作用 |\n| --- | --- | --- |\n| 表锁 | 表 | 意向锁 IS/IX 快速判断表内有无行锁 |\n| Record | 索引记录 | 锁住一行 |\n| Gap | 索引间隙 | 阻止他人在区间插入 |\n| Next-Key | 记录+前间隙 | 范围当前读防幻读 |\n| 插入意向锁 | 间隙内 | insert 前申请，与 Gap 冲突 |\n| 自增锁 | 表级 | auto_increment 分配 |\n\n## 加锁规则（RR）\n\n1. 加锁基本单位 Next-Key，前开后闭\n2. 唯一索引等值命中 → 退化为记录锁\n3. 唯一索引等值未命中 → 退化为间隙锁\n4. 非唯一索引等值 → 向右遍历到不满足为止，最后 Next-Key 的间隙部分保留\n5. 唯一索引范围 → 向右遍历到不满足，Next-Key 不降级\n\n## 死锁处理\n\n- innodb_deadlock_detect 默认开，发现即回滚代价小的一方\n- 或锁等待超时 innodb_lock_wait_timeout（默认 50s）\n\n## 面试追问\n\n- 追问：意向锁有什么用？\n  答：加表锁时不用遍历所有行锁，看意向锁即可判断冲突，O(1)。\n- 追问：update 没走索引会怎样？\n  答：全表扫描逐行加锁 = 锁全表，极易死锁与阻塞，**update 必须走索引**。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "锁",
+    "间隙锁",
+    "临键锁",
+    "死锁"
+   ],
+   "r": [
+    "mysql-005",
+    "concurrent-011"
+   ]
+  },
+  {
+   "id": "mysql-008",
+   "q": "一条 SQL 的执行过程是怎样的？Server 层和引擎层各做什么？",
+   "a": "## 一句话结论\n\n连接器验权 → 查询缓存（8.0 已删）→ 分析器词法语法分析 → 优化器选索引定计划 → 执行器调引擎接口逐行取数；引擎层负责存储、索引、事务与锁。\n\n## 全流程\n\n1. **连接器**：TCP 握手、认证、授权，维护连接（wait_timeout 默认 8h）\n2. **分析器**：token 化 + 语法树，报错 You have an error in your SQL syntax 在这\n3. **优化器**：基于成本（行数估算 × 单行成本）选索引、定 join 顺序\n4. **执行器**：权限再校验，调 handler 接口 open/read_next，逐行判断条件返回\n5. **引擎层**：buffer pool 取页、索引查找、事务与锁、redo/undo\n\n## 更新语句额外步骤\n\n1. 执行器读行（引擎返回）\n2. 写 undo + 改内存页 + 写 redo（prepare）\n3. 写 binlog\n4. 提交 redo（commit）—— 两阶段提交\n\n## 面试追问\n\n- 追问：为什么 8.0 删查询缓存？\n  答：命中率低、失效粒度粗（表级）、维护成本高，得不偿失。\n- 追问：优化器选错索引怎么办？\n  答：analyze table 更新统计信息、force index（慎用）、改写 SQL、建更合适的索引。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "执行流程",
+    "连接器",
+    "优化器",
+    "执行器"
+   ],
+   "r": [
+    "mysql-009"
+   ]
+  },
+  {
+   "id": "mysql-009",
+   "q": "慢 SQL 怎么优化？给出你的分析路径？",
+   "a": "## 一句话结论\n\n先定位（慢日志 + explain）→ 再定性（没走索引/回表多/排序临时表/锁等待）→ 后动手（建索引/改写/分页优化/拆查询）→ 最后验证（explain 对比 + 压测）。\n\n## 分析路径\n\n1. 开慢日志 long_query_time=1，pt-query-digest 聚合 TOP\n2. explain 看：type（≥range）、key（是否预期索引）、rows（扫描量）、Extra（filesort/temporary/回表）\n3. show profile / performance_schema 看各阶段耗时\n4. 锁等待：show engine innodb status、sys.innodb_lock_waits\n\n## 常见优化手段\n\n| 问题 | 手段 |\n| --- | --- |\n| 全表扫描 | 建索引、修正失效写法 |\n| 回表多 | 覆盖索引 |\n| 深分页 limit 100000,10 | 延迟关联：先查主键再 join |\n| 大事务 | 拆分、批量提交 |\n| filesort | 索引顺序匹配 order by |\n| 临时表 | 避免 select 后 group by 无索引列 |\n| 大字段 | 垂直分表、只查需要的列 |\n| 统计不准 | analyze table |\n\n## 深分页示例\n\n```sql\n-- 慢\nSELECT * FROM t ORDER BY id LIMIT 1000000, 10;\n-- 快：延迟关联\nSELECT t.* FROM t JOIN (SELECT id FROM t ORDER BY id LIMIT 1000000,10) x ON t.id = x.id;\n```\n\n## 面试追问\n\n- 追问：count(*) 和 count(1)、count(col) 区别？\n  答：前两者等价且优化器选最小索引树；count(col) 不统计 NULL。\n- 追问：为什么不建议 select *？\n  答：回表、网络、无法覆盖索引、字段变更易出 bug。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "慢查询",
+    "explain",
+    "优化"
+   ],
+   "r": [
+    "mysql-003",
+    "mysql-008"
+   ]
+  },
+  {
+   "id": "mysql-010",
+   "q": "主从复制的原理？主从延迟怎么产生、怎么缓解？",
+   "a": "## 一句话结论\n\n主库写 binlog → 从库 IO 线程拉取写 relay log → SQL 线程回放；延迟根因是**从库单线程回放 + 大事务 + 从库负载**，缓解靠并行复制、拆大事务、读写分离路由。\n\n## 复制三线程\n\n1. 主库：binlog dump 线程推送\n2. 从库 IO 线程：拉 binlog 写 relay log\n3. 从库 SQL 线程：读 relay log 回放（5.7 前单线程）\n\n## 三种复制方式\n\n| 方式 | 说明 |\n| --- | --- |\n| 异步（默认） | 主不等从，丢数据风险 |\n| 半同步 | 至少一从收到 binlog 才提交，降丢失窗口 |\n| 组复制 MGR | 多数派协议，强一致但复杂 |\n\n## 延迟来源与缓解\n\n1. 大事务（删百万行）→ 拆批\n2. 单线程回放 → 5.7+ 基于组/逻辑时钟的并行复制（replica_parallel_workers）\n3. 从库查询负载高 → 隔离、加从库\n4. 网络/磁盘慢 → 优化硬件\n5. 业务侧：写后读强制走主、关键读用 select ... for update 或等待位点\n\n## 面试追问\n\n- 追问：GTID 是什么？\n  答：全局事务 ID（server_uuid:seq），切换主从不用算 binlog 位点，failover 更简单。\n- 追问：读写分离怎么保证读到刚写的数据？\n  答：写后短时间内路由主库、或比对从库位点、或业务容忍最终一致。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "主从复制",
+    "binlog",
+    "延迟"
+   ],
+   "r": [
+    "mysql-004"
+   ]
+  },
+  {
+   "id": "mysql-011",
+   "q": "分库分表怎么做？什么时候该分、分片键怎么选？",
+   "a": "## 一句话结论\n\n单机容量/性能到瓶颈（单表 2000 万+ 或 QPS 扛不住）才分；分片键选**查询最高频的维度**（如 user_id），用 ShardingSphere/MyCat 路由，代价是跨片查询与事务变复杂。\n\n## 何时分\n\n1. 单表行数 > 2000 万~5000 万，B+ 树变高、DDL 慢\n2. 单机 IO/CPU 到瓶颈，垂直优化（索引/缓存/读写分离）已尽\n3. 先垂直分（拆业务表）再水平分（拆行）\n\n## 分片策略\n\n| 策略 | 优点 | 缺点 |\n| --- | --- | --- |\n| hash 取模 | 均匀 | 扩容要迁移（用一致性哈希缓解） |\n| range（时间/ID 段） | 扩容简单、范围查询友好 | 热点（最近数据集中） |\n| 基因法 | 多维度路由 | 设计复杂 |\n\n## 带来的问题与对策\n\n1. 跨片 join → 冗余字段/应用层组装/ES 异构索引\n2. 跨片聚合 → 中间件归并或离线计算\n3. 分布式事务 → 柔性事务/最终一致\n4. 全局唯一 ID → 雪花算法\n5. 扩容 → 双倍扩容法/一致性哈希预分片\n\n## 面试追问\n\n- 追问：不分表能扛住吗？有没有替代？\n  答：归档历史数据 + 冷热分离 + 缓存 + ES 承接复杂查询，往往比硬分更划算。\n- 追问：分片键选错会怎样？\n  答：数据倾斜 + 大量跨片查询，性能比不分还差。",
+   "d": 4,
+   "f": "mid",
+   "t": [
+    "分库分表",
+    "分片键",
+    "中间件"
+   ],
+   "r": [
+    "mysql-009"
+   ]
+  },
+  {
+   "id": "mysql-012",
+   "q": "什么是索引下推和延迟关联？它们分别优化了什么？",
+   "a": "## 一句话结论\n\n索引下推（ICP）把索引可判断的条件推到引擎层过滤，减少回表；延迟关联先只查主键再回表取行，减少深分页时的大量无效回表。\n\n## ICP\n\n```sql\n-- 索引 (name, age)\nSELECT * FROM t WHERE name LIKE '张%' AND age = 20;\n-- 无 ICP：name 范围回表后再过滤 age\n-- 有 ICP：引擎在索引里直接过滤 age=20，只回表命中的行\n```\nexplain 的 Extra 显示 Using index condition。\n\n## 延迟关联\n\n1. 第一层：`SELECT id FROM t WHERE 条件 ORDER BY x LIMIT 大偏移, n`（覆盖索引，不回表）\n2. 第二层：用 id 回表 join 取完整行\n3. 把\"扫描 100 万行回表\"变成\"扫描 100 万索引项 + 回表 n 行\"\n\n## 面试追问\n\n- 追问：ICP 什么时候不生效？\n  答：条件列不在同一索引、或 5.6 以下版本。\n- 追问：还有别的分页优化吗？\n  答：游标分页（where id > last_id limit n），无偏移最稳。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "ICP",
+    "延迟关联",
+    "优化"
+   ],
+   "r": [
+    "mysql-002",
+    "mysql-009"
+   ]
+  }
+ ]
+}

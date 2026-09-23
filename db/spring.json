@@ -1,0 +1,153 @@
+{
+ "track": "job",
+ "id": "spring",
+ "name": "Spring",
+ "badge": "Sp",
+ "color": "#4E8A3C",
+ "desc": "IOC / AOP / Bean 生命周期 / 事务",
+ "questions": [
+  {
+   "id": "spring-001",
+   "q": "什么是 IOC 和 DI？Spring 是怎么实现控制反转的？",
+   "a": "## 一句话结论\n\nIOC 是把对象的创建与组装权从程序员手里交给容器（控制反转），DI 是其实现手段（容器把依赖注入进来）；底层靠 **BeanDefinition 描述 + 反射实例化 + 三级缓存解决循环依赖**。\n\n## 为什么需要 IOC\n\n1. 解耦：组件不 new 依赖，只声明需要，替换实现不改调用方\n2. 统一生命周期管理：单例、初始化、销毁由容器负责\n3. 横切能力挂载点：AOP、事务都依赖容器代理 Bean\n\n## 核心抽象\n\n1. **BeanFactory**：最简容器，getBean 时才创建（懒）\n2. **ApplicationContext**：企业级容器，启动预实例化单例、事件、国际化、资源加载\n3. **BeanDefinition**：Bean 的元数据（类名、scope、依赖、init 方法）\n4. **BeanPostProcessor**：Bean 初始化前后的钩子，AOP/注解处理的挂载点\n\n## 注入方式对比\n\n| 方式 | 评价 |\n| --- | --- |\n| 字段 @Autowired | 简洁但隐藏依赖、不利于测试 |\n| setter | 可选依赖合适 |\n| 构造器 | **推荐**：依赖明确、不可变、利于单测 |\n\n## 面试追问\n\n- 追问：@Autowired 和 @Resource 区别？\n  答：前者 Spring 的按类型（可 @Qualifier 限定），后者 JDK 的按名称再按类型。\n- 追问：BeanFactory 和 ApplicationContext 启动差异？\n  答：前者懒加载省内存但问题暴露晚；后者启动即创建单例，问题早暴露。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "IOC",
+    "DI",
+    "容器",
+    "BeanFactory"
+   ],
+   "r": [
+    "spring-002",
+    "spring-003"
+   ]
+  },
+  {
+   "id": "spring-002",
+   "q": "Bean 的完整生命周期是怎样的？每个阶段能做什么扩展？",
+   "a": "## 一句话结论\n\n生命周期 = 实例化（构造）→ 属性填充 → Aware 回调 → BeanPostProcessor 前置 → 初始化（@PostConstruct/afterPropertiesSet/init-method）→ 后置（**AOP 代理在这产生**）→ 使用 → 销毁回调；扩展点就是各阶段的回调接口。\n\n## 十步流程\n\n1. getBean → 三级缓存getSingleton\n2. **实例化**：构造器/工厂方法（此时是裸对象）\n3. 放入三级缓存（ObjectFactory，供循环依赖取早期引用）\n4. **属性填充**：@Autowired/@Value 注入\n5. Aware 接口：BeanNameAware、ApplicationContextAware 等\n6. **postProcessBeforeInitialization**\n7. **初始化**：@PostConstruct → InitializingBean.afterPropertiesSet → init-method\n8. **postProcessAfterInitialization**：AnnotationAwareAspectJAutoProxyCreator 在此包代理\n9. 放入单例池（一级缓存）\n10. 容器关闭：@PreDestroy → DisposableBean → destroy-method\n\n## 扩展点用途\n\n- InstantiationAwareBeanPostProcessor：干预实例化（如缓存代理）\n- BeanPostProcessor：包装 Bean（AOP、配置绑定）\n- BeanFactoryPostProcessor：改 BeanDefinition（如占位符解析）\n\n## 面试追问\n\n- 追问：@PostConstruct 和构造器谁先？\n  答：构造器先（实例化），@PostConstruct 在初始化阶段，此时依赖已注入。\n- 追问：为什么 AOP 代理在后置而不是初始化前？\n  答：初始化方法可能要被代理拦截语义上不应跳过，且早期引用已可被循环依赖使用。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "Bean生命周期",
+    "BeanPostProcessor",
+    "初始化"
+   ],
+   "r": [
+    "spring-001",
+    "spring-004"
+   ]
+  },
+  {
+   "id": "spring-003",
+   "q": "Spring 怎么解决循环依赖？三级缓存各自存什么？",
+   "a": "## 一句话结论\n\n三级缓存：singletonObjects（成品）、earlySingletonObjects（早期引用/半成品）、singletonFactories（ObjectFactory）；**第三级存在的意义是循环依赖时也能拿到 AOP 代理对象**，且只在有循环依赖时才提前创建代理。\n\n## 三级结构\n\n| 缓存 | 存什么 | 何时放入 |\n| --- | --- | --- |\n| 一级 singletonObjects | 完整 Bean | 生命周期结束 |\n| 二级 earlySingletonObjects | 早期引用（可能是代理） | 循环依赖被取用时 |\n| 三级 singletonFactories | ObjectFactory lambda | 实例化后立刻 |\n\n## 流程（A 依赖 B，B 依赖 A）\n\n1. A 实例化 → 放三级缓存（factory 里包着 getEarlyReference，可返回代理）\n2. A 填充属性发现要 B → 创建 B\n3. B 填充属性要 A → 从三级取 factory.getObject() → 若有 AOP 则**提前创建代理**，放入二级，删三级\n4. B 完成 → 一级\n5. A 拿到 B 完成填充 → 初始化 → 一级（若第 3 步已代理，则用同一个代理引用）\n\n## 为什么两级不够\n\n- 无 AOP 时两级确实够\n- 有 AOP 时，代理应在初始化后创建；但循环依赖要求提前给引用。三级缓存把\"是否提前代理\"的决定**延迟到被循环引用时**，符合正常 Bean 的代理时机语义\n\n## 解决不了的循环\n\n1. 构造器注入的循环（实例化就要依赖）→ 报 BeanCurrentlyInCreationException，用 @Lazy 破\n2. prototype 作用域循环 → 不支持\n3. @Async Bean 参与循环 → 代理不一致报错\n\n## 面试追问\n\n- 追问：@Lazy 怎么破构造器循环？\n  答：注入的是代理占位，真正 getBean 延迟到首次调用。\n- 追问：为什么不用 setter 强制规范避免循环？\n  答：可以，但框架选择兼容历史代码；新代码建议构造器注入 + 重构消除循环。",
+   "d": 5,
+   "f": "high",
+   "t": [
+    "循环依赖",
+    "三级缓存",
+    "早期引用"
+   ],
+   "r": [
+    "spring-002",
+    "spring-009"
+   ]
+  },
+  {
+   "id": "spring-004",
+   "q": "Spring AOP 的实现原理？通知类型和执行顺序？",
+   "a": "## 一句话结论\n\nAOP 靠动态代理在运行期织入横切逻辑；通知有 @Before/@After/@AfterReturning/@AfterThrowing/@Around 五种，**@Around 包一切，顺序为 Around前 → Before → 目标 → AfterReturning/Throwing → After → Around后**。\n\n## 核心概念\n\n- Aspect：切面（@Aspect 类）\n- Pointcut：切入点表达式（execution/within/annotation）\n- Advice：通知（五种）\n- JoinPoint / ProceedingJoinPoint：连接点\n\n## 执行顺序（单切面）\n\n```text\n@Around 前半\n  @Before\n    目标方法\n  @AfterReturning 或 @AfterThrowing\n  @After\n@Around 后半\n```\n\n多切面时用 @Order 控制，值小先执行（外层）。\n\n## 表达式示例\n\n```java\n@Around(\"execution(* com.x.service..*.*(..)) && @annotation(com.x.anno.Log)\")\n```\n\n## 失效场景\n\n1. 同类 this 自调用（不经过代理）\n2. 方法非 public（CGLIB 可但 JDK 不行；Spring 默认只代理 public）\n3. 代理对象未进容器（new 出来的）\n4. 异常被内部吞掉，@AfterThrowing 不触发\n\n## 面试追问\n\n- 追问：AOP 和装饰器模式区别？\n  答：装饰器是编译期静态组合，AOP 是容器运行期按声明织入，配置与代码分离。\n- 追问：切入点表达式性能？\n  答：启动时解析缓存，运行期匹配开销可忽略；避免过宽表达式导致代理过多。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "AOP",
+    "切面",
+    "通知顺序",
+    "代理"
+   ],
+   "r": [
+    "java-009",
+    "spring-002"
+   ]
+  },
+  {
+   "id": "spring-005",
+   "q": "Spring 事务的传播行为有哪些？什么场景用 REQUIRES_NEW？",
+   "a": "## 一句话结论\n\n七种传播：REQUIRED（加入或新建，默认）、SUPPORTS、MANDATORY、REQUIRES_NEW（挂起外层开新事务）、NOT_SUPPORTED、NEVER、NESTED（savepoint）；**REQUIRES_NEW 用于\"内层成败不影响外层\"或\"内层必须独立提交\"，如操作日志、审计**。\n\n## 七种速记\n\n| 传播 | 有外层事务时 | 无外层时 |\n| --- | --- | --- |\n| REQUIRED | 加入 | 新建 |\n| SUPPORTS | 加入 | 非事务执行 |\n| MANDATORY | 加入 | 抛异常 |\n| REQUIRES_NEW | 挂起外层，新建 | 新建 |\n| NOT_SUPPORTED | 挂起外层，非事务 | 非事务 |\n| NEVER | 抛异常 | 非事务 |\n| NESTED | 外层内 savepoint | 同 REQUIRED |\n\n## REQUIRES_NEW vs NESTED\n\n1. REQUIRES_NEW：两个独立事务，内层回滚不影响外层（外层捕获异常后继续）\n2. NESTED：同一事务，内层回滚到 savepoint，外层回滚则全回滚\n3. NESTED 依赖 JDBC savepoint，JPA 不支持\n\n## 典型场景\n\n- 日志/审计/消息记录：REQUIRES_NEW，业务回滚日志也要留\n- 批量导入部分成功：NESTED，单条失败回滚到 savepoint 继续下一条\n\n## 面试追问\n\n- 追问：REQUIRES_NEW 会死锁吗？\n  答：会。外层持锁未释放，内层新事务再锁同行 → 自锁等待超时。\n- 追问：传播行为作用在谁身上？\n  答：被调用方法的事务属性；调用方有无事务决定\"外层\"是否存在。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "事务传播",
+    "REQUIRES_NEW",
+    "嵌套事务"
+   ],
+   "r": [
+    "spring-006"
+   ]
+  },
+  {
+   "id": "spring-006",
+   "q": "Spring 事务在哪些情况下会失效？",
+   "a": "## 一句话结论\n\n失效六大类：**非 public、自调用、异常类型不匹配（默认只回滚 RuntimeException/Error）、吞异常、传播配置错、多线程/新连接脱离事务**；根因都是\"没走到代理\"或\"回滚规则不满足\"。\n\n## 失效清单\n\n1. 方法非 public（代理不拦截）\n2. this 自调用（绕过代理）→ 注入自身 / AopContext.currentProxy()\n3. 抛 checked 异常但没配 rollbackFor=Exception.class\n4. catch 后不抛（事务感知不到失败）\n5. 传播行为 NOT_SUPPORTED / NEVER\n6. 多线程：新线程用新连接，不在同一事务\n7. 数据库引擎不支持事务（MyISAM）\n8. @Transactional 加在接口上而用 CGLIB（Boot 默认 CGLIB 看类，接口注解可能失效）\n\n## 回滚规则\n\n- 默认：RuntimeException 与 Error 回滚，checked 不回滚\n- rollbackFor / noRollbackFor 显式控制\n- 手动：TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()\n\n## 排查方法\n\n1. 日志开 org.springframework.transaction=DEBUG 看是否开启/提交\n2. 断点看是否进 TransactionInterceptor\n3. 检查调用链是否经过代理对象（打印 this.getClass() 看有无 $$EnhancerBySpringCGLIB）\n\n## 面试追问\n\n- 追问：事务方法里 try-catch 了还想回滚怎么办？\n  答：catch 里 setRollbackOnly() 或重新抛出。\n- 追问：@Transactional 的隔离级别怎么设？\n  答：isolation 属性，默认用数据库的（MySQL RR）。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "事务失效",
+    "自调用",
+    "回滚规则"
+   ],
+   "r": [
+    "spring-005",
+    "spring-003"
+   ]
+  },
+  {
+   "id": "spring-007",
+   "q": "Spring 的事件机制是什么？@EventListener 和 ApplicationEvent 怎么用？",
+   "a": "## 一句话结论\n\nSpring 事件 = 观察者模式的容器级实现：publishEvent 发布 → ApplicationEventMulticaster 广播 → @EventListener/接口监听器消费；**默认同步同线程，@Async 可异步，事务内发布要注意时机**。\n\n## 三要素\n\n1. 事件：继承 ApplicationEvent 或任意对象（4.2+ 支持 POJO 事件）\n2. 发布：ApplicationEventPublisher（容器本身实现）\n3. 监听：@EventListener 方法 / ApplicationListener 接口 / @TransactionalEventListener\n\n## 同步 vs 异步\n\n- 默认同步：监听器异常会传播回发布者\n- 异步：监听方法加 @Async + 配置线程池，注意线程上下文丢失（ThreadLocal/MDC）\n\n## 事务感知监听\n\n```java\n@TransactionalEventListener(phase = AFTER_COMMIT)\npublic void on(OrderPaid e) { ... }   // 事务提交后才执行，避免回滚却已发通知\n```\n\n## 应用场景\n\n1. 解耦：下单成功后发积分/通知/消息，主流程不感知\n2. 框架内通信：ContextRefreshedEvent 等生命周期事件\n\n## 面试追问\n\n- 追问：事件能跨进程吗？\n  答：不能，是 JVM 内的；跨进程要用 MQ。\n- 追问：监听器顺序怎么控制？\n  答：@Order / Ordered 接口。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "事件机制",
+    "EventListener",
+    "解耦"
+   ],
+   "r": [
+    "spring-001"
+   ]
+  },
+  {
+   "id": "spring-008",
+   "q": "SpringMVC 的请求处理流程是怎样的？九大组件各干什么？",
+   "a": "## 一句话结论\n\nDispatcherServlet 收请求 → HandlerMapping 找处理器 → HandlerAdapter 适配调用 → 返回值经 HandlerAdapter 处理成 ModelAndView 或直接写响应 → ViewResolver 解析视图（REST 则消息转换器写 JSON）→ 异常走 HandlerExceptionResolver。\n\n## 流程\n\n1. 请求进 DispatcherServlet（前端控制器）\n2. HandlerMapping（RequestMappingHandlerMapping）按 URL+方法找 Handler 与拦截器链\n3. HandlerAdapter（RequestMappingHandlerAdapter）执行：参数解析（@RequestBody/@PathVariable…）→ 调方法 → 处理返回值\n4. @ResponseBody/RestController：HttpMessageConverter（Jackson）直接写 JSON，不走视图\n5. 视图模式：ModelAndView → ViewResolver → View 渲染\n6. 异常：HandlerExceptionResolver（@ExceptionHandler/@ControllerAdvice）\n\n## 参数解析与转换\n\n- HandlerMethodArgumentResolver：把请求变成参数（11+ 内置）\n- HttpMessageConverter：对象 ↔ JSON/XML\n- 数据绑定与校验：WebDataBinder + JSR303\n\n## 拦截器 vs 过滤器\n\n| 维度 | Filter | Interceptor |\n| --- | --- | --- |\n| 规范 | Servlet | Spring |\n| 范围 | 所有请求 | 仅进 DispatcherServlet 的 |\n| 能否拿 Handler | 否 | 能 |\n| 典型 | 编码、跨域 | 登录校验、日志 |\n\n## 面试追问\n\n- 追问：@RestControllerAdvice 和 @ControllerAdvice 区别？\n  答：前者 = 后者 + @ResponseBody，统一异常返回 JSON 用前者。\n- 追问：异步请求怎么处理？\n  答：返回 Callable/DeferredResult/WebFlux；Servlet 3.1 异步上下文。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "SpringMVC",
+    "DispatcherServlet",
+    "HandlerAdapter"
+   ],
+   "r": [
+    "springboot-003"
+   ]
+  },
+  {
+   "id": "spring-009",
+   "q": "@Autowired 注入的 Bean 是线程安全的吗？单例 Bean 怎么写才安全？",
+   "a": "## 一句话结论\n\n容器只保证\"引用安全\"，不保证\"状态安全\"：单例 Bean 若无可变成员变量则天然安全；**有可变状态就要无状态化、ThreadLocal、或加锁/原子类**，Service/DAO 层应设计为无状态。\n\n## 安全模型\n\n1. 单例 = 全容器一个实例，多线程共享\n2. 无状态（只有 final 依赖引用）→ 安全\n3. 有状态（成员变量存请求数据）→ 不安全，经典 bug\n\n## 反例与修正\n\n```java\n// 错：成员变量存请求上下文\n@Service class OrderSvc { private Long curUserId; ... }\n// 对：方法参数传递 / ThreadLocal / 局部变量\n```\n\n## 有状态组件的正确姿势\n\n1. 请求级数据：方法参数、HttpServletRequest、RequestScope Bean\n2. 用户上下文：ThreadLocal（记得 remove）\n3. 计数/缓存：AtomicXxx、ConcurrentHashMap、Caffeine\n4. 真需要每请求实例：@Scope(\"request\") + 代理模式\n\n## 面试追问\n\n- 追问：prototype Bean 线程安全吗？\n  答：每次注入新实例，共享概率低但仍取决于使用方式；不是银弹。\n- 追问：@Configuration 类为什么是单例且安全？\n  答：CGLIB 代理保证 @Bean 方法走容器取单例，配置类本身无请求状态。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "单例",
+    "线程安全",
+    "无状态"
+   ],
+   "r": [
+    "spring-001",
+    "spring-003"
+   ]
+  }
+ ]
+}

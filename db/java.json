@@ -1,0 +1,238 @@
+{
+ "track": "job",
+ "id": "java",
+ "name": "Java 基础",
+ "badge": "Ja",
+ "color": "#C4622D",
+ "desc": "集合 / OOP / 泛型 / 异常 / 反射 / IO",
+ "questions": [
+  {
+   "id": "java-001",
+   "q": "String、StringBuffer、StringBuilder 的区别？为什么 String 是不可变的？",
+   "a": "## 一句话结论\n\nString 不可变、线程安全但拼接慢；StringBuffer 可变且线程安全（方法加 synchronized）；StringBuilder 可变但非线程安全，**单线程拼接首选它**。\n\n## 三者对比\n\n| 维度 | String | StringBuffer | StringBuilder |\n| --- | --- | --- | --- |\n| 可变性 | 不可变 | 可变 | 可变 |\n| 线程安全 | 安全（不可变） | 安全（synchronized） | 不安全 |\n| 性能 | 拼接差（每次新建对象） | 中 | 最好 |\n| 适用 | 少量操作、常量 | 多线程拼接 | 单线程拼接（默认） |\n\n## 为什么 String 设计成不可变\n\n1. **缓存 hash**：hashCode 只算一次就能缓存，做 HashMap 的 key 快\n2. **线程安全**：不可变对象天然线程安全，无需同步\n3. **安全**：网络连接、文件路径、类名等参数用 String 传递，不可变防止中途被篡改\n4. **字符串常量池**：不可变才能让字面量共享同一个对象，省内存\n\n底层实现：JDK 8 是 `private final char[] value`，JDK 9 起改为 `byte[]` + coder（Latin-1 单字节存储，进一步省内存）。\n\n## 面试追问\n\n- 追问：`String s = new String(\"abc\")` 创建了几个对象？\n  答：最多 2 个——常量池里的 \"abc\"（若不存在）+ 堆里的新 String 对象。\n- 追问：`s1 + s2` 和 `s1.concat(s2)` 有区别吗？\n  答：编译期 `+` 对变量会转成 StringBuilder.append；对全字面量会直接常量折叠。\n- 追问：JDK 9 为什么把 char[] 换成 byte[]？\n  答：大部分字符串是 Latin-1，一个字符只需 1 字节，省一半内存。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "String",
+    "字符串",
+    "不可变"
+   ],
+   "r": [
+    "java-002",
+    "java-003"
+   ]
+  },
+  {
+   "id": "java-002",
+   "q": "String 的 equals 和 == 有什么区别？字符串常量池是怎么工作的？",
+   "a": "## 一句话结论\n\n`==` 比引用（是否同一对象），`equals` 比内容；字符串常量池让相同字面量复用同一对象，`intern()` 可手动入池。\n\n## 原理\n\n1. `==`：基本类型比值，引用类型比地址\n2. `String.equals`：先比引用，再比长度，最后逐字符比（JDK 9 起按 coder 分支比较）\n3. 常量池（StringTable）：JDK 7 起在**堆**中（之前在方法区/永久代），本质是一个哈希表\n4. 字面量 `\"abc\"` 编译期进常量池；`new String(\"abc\")` 在堆新建，池里有则复用引用\n5. `s.intern()`：池中存在则返回池中引用，不存在则把当前对象引用放入池中（JDK 7+）\n\n## 经典代码\n\n```java\nString a = \"abc\";            // 池\nString b = \"abc\";            // 池，a == b 为 true\nString c = new String(\"abc\");// 堆，c == a 为 false\nSystem.out.println(c.intern() == a); // true\n```\n\n## 面试追问\n\n- 追问：`String a = \"a\" + \"b\";` 和 `String a = x + y;`（x、y 是变量）有何不同？\n  答：前者编译期常量折叠直接得 \"ab\" 入池；后者运行期 new StringBuilder 拼接，结果在堆上。\n- 追问：常量池会 OOM 吗？\n  答：会，StringTable 大小有限（-XX:StringTableSize），大量 intern 会拖慢并占内存。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "String",
+    "常量池",
+    "equals"
+   ],
+   "r": [
+    "java-001"
+   ]
+  },
+  {
+   "id": "java-003",
+   "q": "HashMap 的底层原理？为什么数组长度必须是 2 的幂？",
+   "a": "## 一句话结论\n\nHashMap = 数组 + 链表 + 红黑树；用 `(n-1) & hash` 代替取模定位下标，2 的幂保证与运算结果均匀分布且扩容时可复用高位 bit。\n\n## 结构演进\n\n1. JDK 7：数组 + 链表，头插法（并发扩容可能成环死循环）\n2. JDK 8：数组 + 链表 + 红黑树，**尾插法**；链表长度 ≥ 8 且数组 ≥ 64 时转红黑树，≤ 6 退化回链表\n3. 默认容量 16，负载因子 0.75，扩容为 2 倍\n\n## 关键流程\n\n- **hash 扰动**：`(h = key.hashCode()) ^ (h >>> 16)`，让高 16 位参与运算，减少碰撞\n- **定位**：`tab[(n - 1) & hash]`，n 为 2 的幂时 `n-1` 全 1，与运算 = 取模但更快\n- **扩容 rehash**：新下标 = 旧下标 或 旧下标 + oldCap，只需看 hash 新增的那一位是 0 还是 1，无需重算\n\n## 为什么是 2 的幂\n\n1. `&` 比 `%` 快\n2. n-1 低位全 1，hash 的低位差异都能影响下标，分布均匀（若 n=10，n-1=9=1001，很多位被\"浪费\"，碰撞剧增）\n3. 扩容时元素位置只有\"不变 / +oldCap\"两种，迁移高效\n\n## 面试追问\n\n- 追问：负载因子为什么是 0.75？\n  答：泊松分布下 0.75 时链表长度到 8 的概率已极小（约千万分之六），是空间与时间的折中。\n- 追问：HashMap 线程安全吗？怎么保证？\n  答：不安全。用 ConcurrentHashMap，见 [[java-004]]。\n- 追问：key 可以是自定义对象吗？\n  答：可以，但必须重写 equals 和 hashCode，且最好不可变。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "HashMap",
+    "集合",
+    "哈希"
+   ],
+   "r": [
+    "java-004",
+    "java-005"
+   ]
+  },
+  {
+   "id": "java-004",
+   "q": "ConcurrentHashMap 在 JDK 8 是怎么保证线程安全的？",
+   "a": "## 一句话结论\n\nJDK 8 抛弃分段锁，改用 **CAS + synchronized 只锁单个桶头节点**，把并发粒度降到数组元素级别，配合 sizeCtl 控制扩容。\n\n## 核心机制\n\n1. **put 流程**：\n   - 计算 hash；表为空则 initTable（CAS 设置 sizeCtl）\n   - 桶为空：CAS 写入头节点，失败自旋重试\n   - 桶非空：synchronized 锁住头节点，链表/红黑树内插入\n   - 正在扩容（头节点 hash == MOVED）：helpTransfer 协助迁移\n2. **扩容**：多线程协作迁移，每个线程领一段 stride（最小 16 桶），ForwardingNode 占位\n3. **size()**：baseCount + CounterCell[] 分散计数（类似 LongAdder），避免单点竞争\n4. **get**：无锁，volatile 保证可见性\n\n## 与 JDK 7 对比\n\n| 维度 | JDK 7 | JDK 8 |\n| --- | --- | --- |\n| 锁 | Segment 分段锁（ReentrantLock） | CAS + synchronized 锁桶头 |\n| 结构 | 数组+链表 | 数组+链表+红黑树 |\n| 粒度 | 段 | 单个桶 |\n| 计数 | 分段累加 | baseCount + CounterCell |\n\n## 面试追问\n\n- 追问：为什么 JDK 8 又用回 synchronized？\n  答：JDK 6 后偏向/轻量级锁优化成熟，无竞争时开销极小，且比 ReentrantLock 少一层对象。\n- 追问：key 或 value 能为 null 吗？\n  答：不能。并发下 null 无法区分\"不存在\"和\"值为 null\"的歧义（HashMap 允许）。\n- 追问：sizeCtl 是什么？\n  答：一个多用途控制变量：负数表示初始化/扩容中，正数表示下次扩容阈值。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "ConcurrentHashMap",
+    "并发集合",
+    "CAS"
+   ],
+   "r": [
+    "java-003",
+    "concurrent-003"
+   ]
+  },
+  {
+   "id": "java-005",
+   "q": "ArrayList 和 LinkedList 的区别？ArrayList 的扩容机制？",
+   "a": "## 一句话结论\n\nArrayList 是动态数组，随机访问 O(1)、尾部增删均摊 O(1)；LinkedList 是双向链表，头部插入删除 O(1) 但随机访问 O(n)，**多数场景 ArrayList 更优**。\n\n## 对比\n\n| 操作 | ArrayList | LinkedList |\n| --- | --- | --- |\n| get(i) | O(1) | O(n) |\n| 尾部 add | 均摊 O(1) | O(1) |\n| 头部 add | O(n) | O(1) |\n| 中间插入 | O(n)（移动元素） | O(n)（找节点）+ O(1) 插入 |\n| 内存 | 连续，缓存友好 | 每节点多两个指针，缓存不友好 |\n\n## ArrayList 扩容\n\n1. 默认空数组，首次 add 时容量 10\n2. 不够时 `newCapacity = oldCapacity + (oldCapacity >> 1)`，即 **1.5 倍**\n3. `Arrays.copyOf` 拷贝到新数组（System.arraycopy，native 级 memcpy，很快）\n4. 可预估大小时构造器指定 initialCapacity 避免多次扩容\n\n## 面试追问\n\n- 追问：LinkedList 真的插入快吗？\n  答：只在已知节点引用时快；按索引插入要先 O(n) 找节点，实测常不如 ArrayList 的 memcpy。\n- 追问：ArrayList 是线程安全的吗？\n  答：不是。并发写用 CopyOnWriteArrayList 或 Collections.synchronizedList，读多写少选前者。\n- 追问：fail-fast 是什么？\n  答：迭代时用 modCount 检测结构修改，变化即抛 ConcurrentModificationException。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "ArrayList",
+    "LinkedList",
+    "集合"
+   ],
+   "r": [
+    "java-003"
+   ]
+  },
+  {
+   "id": "java-006",
+   "q": "Java 的异常体系是怎样的？checked 和 unchecked 的区别？",
+   "a": "## 一句话结论\n\nThrowable 分 Error（JVM 级，不可捕获处理）和 Exception；Exception 中除 RuntimeException 外都是 checked，**编译期强制处理**，RuntimeException 是 unchecked，靠编程规范避免。\n\n## 体系结构\n\n```text\nThrowable\n├── Error            OutOfMemoryError / StackOverflowError / NoClassDefFoundError\n└── Exception\n    ├── checked      IOException / SQLException / ClassNotFoundException\n    └── RuntimeException (unchecked)\n        NullPointerException / IndexOutOfBounds / ClassCast / IllegalArgument\n```\n\n## 关键区别\n\n| 维度 | checked | unchecked |\n| --- | --- | --- |\n| 编译检查 | 必须 try/catch 或 throws | 不强制 |\n| 语义 | 可预期的外部失败（IO、网络） | 编程错误（空指针、越界） |\n| 处理策略 | 捕获并恢复/降级 | 修复代码，不应层层吞掉 |\n\n## 工程实践\n\n1. 不要用异常做流程控制（构造异常要填栈帧，成本高）\n2. `finally` 里不要 return，会覆盖 try 的返回值\n3. try-with-resources 自动关闭 Closeable，替代手写 finally\n4. 自定义业务异常继承 RuntimeException，带错误码枚举\n\n## 面试追问\n\n- 追问：finally 一定执行吗？\n  答：不一定。System.exit、线程被 kill、JVM 崩溃时不执行。\n- 追问：throw 和 throws 区别？\n  答：throw 抛实例，throws 声明方法可能抛出的异常类型。",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "异常",
+    "Exception",
+    "Error"
+   ],
+   "r": [
+    "java-007"
+   ]
+  },
+  {
+   "id": "java-007",
+   "q": "try-with-resources 的原理是什么？和 finally 比好在哪？",
+   "a": "## 一句话结论\n\ntry-with-resources 是语法糖，编译器生成隐含的 finally 调 close()，且**异常压制机制**保证主异常不被 close 的异常覆盖。\n\n## 原理\n\n1. 资源必须实现 `AutoCloseable`（或子接口 Closeable）\n2. 编译后等价于：try { ... } finally { 若资源非 null 调 close() }\n3. 若 try 内抛异常 A，close 又抛异常 B：A 作为主异常抛出，B 通过 `addSuppressed` 挂到 A 上，**不会丢信息**\n4. 多资源按声明**逆序**关闭\n\n## 对比手写 finally\n\n```java\n// 手写 finally 的经典坑：close 抛异常会覆盖业务异常\ntry { in.read(); } finally { in.close(); } // close 抛 IOException 时，read 的异常丢失\n```\n\n## 面试追问\n\n- 追问：自定义资源怎么接入？\n  答：实现 AutoCloseable 的 close()，把清理逻辑放进去即可。\n- 追问：catch 和 finally 的执行顺序？\n  答：try 抛异常 → catch → finally；无异常则 try → finally。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "异常",
+    "try-with-resources",
+    "AutoCloseable"
+   ],
+   "r": [
+    "java-006"
+   ]
+  },
+  {
+   "id": "java-008",
+   "q": "什么是反射？反射为什么慢，应用场景有哪些？",
+   "a": "## 一句话结论\n\n反射是运行期通过 Class 对象获取类信息并动态调用成员的能力；慢在安全检查、无法内联、装箱拆箱，但它是 Spring IOC、动态代理、序列化框架的基石。\n\n## 核心 API\n\n```java\nClass<?> c = Class.forName(\"com.x.User\");\nObject o = c.getDeclaredConstructor().newInstance();\nMethod m = c.getDeclaredMethod(\"setName\", String.class);\nm.setAccessible(true);   // 跳过访问检查，提速且能访问 private\nm.invoke(o, \"Tom\");\n```\n\n## 获取 Class 的三种方式\n\n1. `Class.forName(\"全限定名\")`：触发类初始化（执行静态块）\n2. `Xxx.class`：不触发初始化\n3. `obj.getClass()`：已有实例时\n\n## 为什么慢\n\n1. 方法调用走 MethodAccessor 的反射调用链，JIT 难以内联优化\n2. setAccessible(false) 时每次 invoke 都做权限检查\n3. 参数/返回值 Object 化导致装箱拆箱\n4. 实测比直接调用慢一个数量级（纳秒级 vs 几十纳秒），但框架里通常可接受\n\n## 应用场景\n\n- Spring：注解扫描 + 实例化 Bean、依赖注入\n- JDK 动态代理：Proxy.newProxyInstance\n- MyBatis：Mapper 接口代理、结果集映射\n- Jackson/fastjson：字段读写序列化\n- JDBC：Class.forName 加载驱动（新驱动已不需要）\n\n## 面试追问\n\n- 追问：反射能改 final 字段吗？\n  答：字段可以 setAccessible 后改（不推荐）；但方法区里的常量内联已发生，改了对已编译代码无效。\n- 追问：反射破坏单例怎么办？\n  答：构造器里判断实例已存在则抛异常；或用枚举单例，JVM 层面保证不被反射/反序列化破坏。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "反射",
+    "Reflection",
+    "Class"
+   ],
+   "r": [
+    "java-009"
+   ]
+  },
+  {
+   "id": "java-009",
+   "q": "JDK 动态代理和 CGLIB 的区别？Spring AOP 怎么选？",
+   "a": "## 一句话结论\n\nJDK 动态代理基于**接口**（Proxy + InvocationHandler），CGLIB 基于**继承**（生成子类字节码）；Spring Boot 2.x 起默认 CGLIB，目标类无接口也能代理。\n\n## 对比\n\n| 维度 | JDK 动态代理 | CGLIB |\n| --- | --- | --- |\n| 要求 | 目标必须实现接口 | 不能代理 final 类/方法 |\n| 原理 | 运行时生成实现接口的类 | ASM 生成子类，重写方法 |\n| 拦截 | InvocationHandler.invoke | MethodInterceptor.intercept |\n| 调用 | 反射 invoke | FastClass 索引直接调用（更快） |\n| 依赖 | JDK 自带 | Spring 内置 repackaged cglib |\n\n## Spring 的选择逻辑\n\n1. Spring Boot 2.0+：`proxyTargetClass=true` 默认，一律 CGLIB\n2. 传统 Spring XML：有接口走 JDK，无接口走 CGLIB\n3. `@Transactional` 自调用失效的根因就是代理：this 调用不经过代理对象\n\n## 代码骨架\n\n```java\n// JDK\nObject p = Proxy.newProxyInstance(loader, new Class[]{Svc.class},\n    (proxy, method, args) -> { before(); return method.invoke(target, args); });\n```\n\n## 面试追问\n\n- 追问：为什么 CGLIB 不能代理 final 方法？\n  答：子类无法重写 final 方法，拦截器挂不上。\n- 追问：代理对象里 this 调用为什么不走代理？\n  答：this 指向目标对象本身，绕过了代理层；解法是注入自身或 AopContext.currentProxy()。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "动态代理",
+    "Proxy",
+    "CGLIB",
+    "AOP"
+   ],
+   "r": [
+    "java-008",
+    "spring-003"
+   ]
+  },
+  {
+   "id": "java-010",
+   "q": "深拷贝和浅拷贝的区别？怎么实现深拷贝？",
+   "a": "## 一句话结论\n\n浅拷贝只复制对象本身，引用字段仍指向同一对象；深拷贝递归复制所有引用对象，二者完全独立。\n\n## 实现方式对比\n\n1. **浅拷贝**：Object.clone()（需实现 Cloneable），引用字段直接赋值\n2. **深拷贝三种做法**：\n   - 手写 clone：逐层 clone 引用字段（繁琐易漏）\n   - 序列化：JSON / Java 序列化后反序列化（简单通用，性能一般）\n   - 拷贝构造器 / 工厂方法（最可控，推荐领域对象用）\n\n## 代码示例\n\n```java\nclass Order implements Cloneable {\n    User user;                 // 引用字段\n    @Override protected Order clone() throws CloneNotSupportedException {\n        Order o = (Order) super.clone();   // 浅拷贝：user 仍共享\n        o.user = this.user.clone();        // 手动深拷贝引用字段\n        return o;\n    }\n}\n```\n\n## 面试追问\n\n- 追问：Cloneable 不实现会怎样？\n  答：clone() 抛 CloneNotSupportedException；Cloneable 只是标记接口。\n- 追问：为什么现在不推荐 Java 原生序列化做深拷贝？\n  答：慢、有安全漏洞历史、需 serialVersionUID；JSON 方案更通用。",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "拷贝",
+    "clone",
+    "序列化"
+   ],
+   "r": []
+  },
+  {
+   "id": "java-011",
+   "q": "Java 泛型的类型擦除是什么？带来了哪些限制？",
+   "a": "## 一句话结论\n\n泛型只在编译期存在，编译后类型参数被擦除为 Object（或上界），因此运行期拿不到泛型实参、不能 new T、不能重载同擦除签名的方法。\n\n## 擦除规则\n\n1. `List<String>` 与 `List<Integer>` 运行期是同一个 Class\n2. 无界擦除为 Object，有界 `T extends Comparable` 擦除为 Comparable\n3. 桥方法：子类重写泛型方法时编译器生成 bridge method 保持多态\n\n## 由此产生的限制\n\n| 不能做 | 原因 |\n| --- | --- |\n| `new T()` | 运行期不知道 T 是什么 |\n| `new T[]` 泛型数组 | 数组运行期有类型（协变），与擦除冲突 |\n| `instanceof List<String>` | 运行期无此类型信息 |\n| 静态方法引用类泛型参数 | 静态属于类不属于实例 |\n| `void f(List<String>)` 与 `void f(List<Integer>)` 重载 | 擦除后签名相同 |\n\n## 如何\"保留\"泛型\n\n- 子类继承时写死实参：`class MyList extends ArrayList<String>`，可通过 `getGenericSuperclass()` 反射拿到（Jackson、MyBatis 都这么干）\n- 传 Class 令牌：`<T> T read(Class<T> type)`\n\n## 面试追问\n\n- 追问：`List<?>` 和 `List<Object>` 区别？\n  答：`?` 是未知类型，不能 add（除 null）；`List<Object>` 是确定类型，什么都能 add。\n- 追问：PECS 原则？\n  答：Producer-Extends, Consumer-Super：只读用 `<? extends T>`，只写用 `<? super T>`。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "泛型",
+    "类型擦除",
+    "泛型边界"
+   ],
+   "r": [
+    "java-012"
+   ]
+  },
+  {
+   "id": "java-012",
+   "q": "== 和 equals 的区别？为什么重写 equals 必须重写 hashCode？",
+   "a": "## 一句话结论\n\n== 比地址（基本类型比值），equals 比内容；hashCode 契约要求\"equals 相等则 hash 必相等\"，否则 HashMap/HashSet 会找不到元素。\n\n## 契约三规则\n\n1. 自反、对称、传递、一致、对 null 返回 false\n2. equals 相等 ⇒ hashCode 相等\n3. hashCode 相等 ⇏ equals 相等（碰撞允许）\n\n## 违反契约的后果\n\n```java\nSet<Point> set = new HashSet<>();\nset.add(new Point(1, 2));          // 放入桶 A（按旧 hash）\np.setX(3);                          // 改了参与 hash 的字段\nset.contains(new Point(3, 2));      // 算出桶 B，找不到！\n```\n\n## 正确写法\n\n```java\n@Override public boolean equals(Object o) {\n    if (this == o) return true;\n    if (!(o instanceof Point)) return false;\n    Point p = (Point) o;\n    return x == p.x && y == p.y;\n}\n@Override public int hashCode() { return Objects.hash(x, y); }\n```\n\n## 面试追问\n\n- 追问：IDE 生成的 equals 用 instanceof 还是 getClass？\n  答：instanceof 允许子类相等（LSP 友好），getClass 严格同类；Hibernate 代理场景 getClass 会破坏对称性，一般选 instanceof。\n- 追问：hashCode 相同会怎样？\n  答：HashMap 同桶内再用 equals 比较，只是性能退化为链表查找。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "equals",
+    "hashCode",
+    "契约"
+   ],
+   "r": [
+    "java-011"
+   ]
+  },
+  {
+   "id": "java-013",
+   "q": "Java 的 IO 模型有哪些？BIO、NIO、AIO 的区别？",
+   "a": "## 一句话结论\n\nBIO 同步阻塞一连接一线程；NIO 同步非阻塞，用 Selector 多路复用让一个线程管成千连接；AIO 异步非阻塞由 OS 回调完成，Linux 上实现不完善实际少用。\n\n## 对比\n\n| 模型 | 读写 | 等待 | 典型 | 适用 |\n| --- | --- | --- | --- | --- |\n| BIO | 阻塞 | 阻塞 | 传统 Socket | 连接数少 |\n| NIO | 非阻塞 | Selector 轮询就绪 | Netty、Redis | 高并发连接 |\n| AIO | 异步 | 回调通知 | Windows IOCP | Linux epoll 不支持真异步 IO |\n\n## NIO 三大组件\n\n1. **Channel**：双向通道（SocketChannel、FileChannel）\n2. **Buffer**：读写同一块内存，flip 切换\n3. **Selector**：epoll 封装，select() 返回就绪事件集合\n\n## 为什么 Netty 选 NIO 而不是 AIO\n\nLinux 的 aio 对网络文件支持差（epoll 本质是同步多路复用），AIO 收益不明显；NIO + 事件驱动 + 零拷贝已足够。\n\n## 面试追问\n\n- 追问：零拷贝是什么？\n  答：sendfile/mmap 让数据不经过用户态缓冲区，减少 CPU 拷贝与上下文切换；Kafka、Netty FileRegion 都用。\n- 追问：epoll 和 select 区别？\n  答：select 轮询全部 fd 且 O(n)；epoll 用红黑树+就绪链表，只返回活跃 fd，O(活跃数)。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "IO",
+    "NIO",
+    "多路复用",
+    "epoll"
+   ],
+   "r": [
+    "network-005"
+   ]
+  },
+  {
+   "id": "java-014",
+   "q": "Java 8 的接口和抽象类有什么区别？default 方法解决了什么问题？",
+   "a": "## 一句话结论\n\n抽象类表达\"is-a\"且有状态与构造器，接口表达\"can-do\"且可多实现；default 方法让接口能在**不破坏实现类**的前提下演进（Java 8 给 Collection 加 stream 就是靠它）。\n\n## 对比\n\n| 维度 | 抽象类 | 接口 |\n| --- | --- | --- |\n| 继承 | 单继承 | 多实现 |\n| 状态 | 可有实例字段 | 只能 public static final 常量 |\n| 构造器 | 有 | 无 |\n| 方法 | 抽象+具体 | 抽象+default+static+private(9+) |\n| 访问修饰 | 任意 | 方法默认 public |\n| 语义 | 是什么 | 能做什么 |\n\n## default 的价值与坑\n\n1. 价值：接口演进兼容（Comparator.comparing、Collection.stream）\n2. 坑：菱形问题——类同时从两个接口继承同名 default 方法会编译错误，必须类内重写显式指定\n3. 选择原则：有共享状态/模板方法用抽象类；纯能力契约用接口\n\n## 面试追问\n\n- 追问：接口能有 private 方法吗？\n  答：Java 9 起可以，用于 default/static 方法间复用代码。\n- 追问：抽象类能有 final 方法吗？\n  答：可以有具体 final 方法；但不能是 abstract final（矛盾）。",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "接口",
+    "抽象类",
+    "default方法"
+   ],
+   "r": []
+  },
+  {
+   "id": "java-015",
+   "q": "重载和重写的区别？JVM 是怎么分派的？",
+   "a": "## 一句话结论\n\n重载是编译期静态分派（看声明类型选方法），重写是运行期动态分派（看实际对象类型，靠虚方法表）；这就是\"编译看左边，运行看右边\"。\n\n## 分派机制\n\n1. **静态分派**：编译期根据参数静态类型+个数+顺序确定重载版本\n2. **动态分派**：invokevirtual 指令先找实际类的方法表，找不到沿继承链上溯\n3. 虚方法表（vtable）：每个类一张表，存可被重写方法的实际入口，加速查找\n\n## 经典陷阱\n\n```java\nFather f = new Son();\nf.show(null);   // 重载：编译期按 Father 的候选方法选最具体的\nf.print();      // 重写：运行期调 Son 的版本\n```\n\n## 不能被重写的方法\n\n- static（隐藏而非重写）、final、private、构造器\n\n## 面试追问\n\n- 追问：invokevirtual、invokespecial、invokestatic 区别？\n  答：virtual 虚方法动态分派；special 调私有/构造/super；static 静态绑定。\n- 追问：重载能只看返回值不同吗？\n  答：不能，签名不含返回值，编译报错。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "重载",
+    "重写",
+    "动态分派",
+    "虚方法表"
+   ],
+   "r": [
+    "java-009"
+   ]
+  }
+ ]
+}

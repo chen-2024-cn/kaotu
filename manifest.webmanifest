@@ -1,0 +1,53 @@
+{
+  "name": "考途 · 上岸自习室",
+  "short_name": "考途",
+  "description": "离线 Java 后端面试八股文学习工具：MySQL、Spring、JVM、并发、Redis、分布式全覆盖，内置间隔重复记忆算法、错题本、背诵模式与学习统计。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#F5F7F5",
+  "theme_color": "#F5F7F5",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "今日学习", "short_name": "今日", "url": "./index.html#/today", "description": "进入今日 10 题与到期复习" },
+    { "name": "背诵模式", "short_name": "背诵", "url": "./index.html#/recall", "description": "翻卡片练口述表达" },
+    { "name": "全局搜索", "short_name": "搜索", "url": "./index.html#/search", "description": "搜索题干、答案与标签" },
+    { "name": "错题本", "short_name": "错题", "url": "./index.html#/wrong", "description": "复盘自评不会的题目" }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+ "track": "cet4",
+ "id": "cet4-write",
+ "name": "写作与翻译",
+ "badge": "写作",
+ "color": "#A886C9",
+ "desc": "万能模板 · 应用文 · 高分替换 · 翻译词库",
+ "questions": [
+  {
+   "id": "c4w-001",
+   "q": "四级作文评分标准与三段结构",
+   "a": "## 一句话结论\n\n四级作文 120-180 词、占 15%（106.5 分）：**切题 + 三段清晰 + 少量语言亮点 + 少犯错**就能稳进 10-12 分档；跑题和字数不足是两个死刑。\n\n## 评分档位（原始 15 分制）\n\n| 档 | 特征 |\n| --- | --- |\n| 13-15 | 切题、通畅、语言有变化、几乎无错 |\n| 10-12 | 切题、结构清楚、有少量语言错误 |\n| 7-9 | 勉强切题、表达不够清楚 |\n| 4-6 以下 | 跑题 / 字数不够 / 错误连篇 |\n\n## 万能三段架构\n\n```text\n第一段（30-40 词）：引出现象/话题 + 表明立场\n第二段（60-80 词）：论证 —— 两个理由，或一理由一例证\n第三段（30-40 词）：总结 + 建议/展望\n```\n\n## 三类题型与开头\n\n1. **现象议论**：Nowadays, ______ has become a common phenomenon.\n2. **对比选择**（A 还是 B）：When it comes to ______, opinions vary.\n3. **应用文**（书信/通知）：I am writing to ______.\n\n## 硬规则清单\n\n- 少于 120 词降档；写到 150 词左右最安全\n- 必须分三段，段首缩进或顶格统一\n- 简单句为主 + 每段 1 个亮点句（倒装/强调/从句），**亮点句求稳不求炫**\n- 拼写没把握的词换成同义简单词",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "写作",
+    "结构",
+    "评分"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4w-002",
+   "q": "四级议论文万能模板（背这一篇就够）",
+   "a": "## 模板骨架\n\n**第一段：现象 + 立场**\n\n> Nowadays, ______(话题) has become a common phenomenon in our daily life. When it comes to ______, opinions vary from person to person. As far as I am concerned, ______(你的观点).\n\n**第二段：两条理由**\n\n> First of all, ______(理由一). For example, ______(例证一句即可). In addition, ______(理由二).\n\n**第三段：总结 + 建议**\n\n> In short, ______(重申观点). Therefore, we should ______(建议). I believe that ______(积极展望).\n\n## 完整示例（话题：兼职的利弊）\n\n> Nowadays, taking part-time jobs has become a common phenomenon among college students. When it comes to whether students should work part-time, opinions vary from person to person. As far as I am concerned, part-time jobs do more good than harm if properly arranged.\n>\n> First of all, part-time jobs help students gain social experience and improve communication skills, which textbooks can hardly provide. For example, a student working as a tutor learns how to explain problems patiently. In addition, earning money by oneself teaches students the value of money and reduces the burden on their families.\n>\n> In short, part-time jobs are beneficial as long as they do not interfere with academic studies. Therefore, we should balance work and study wisely. I believe that such experience will serve us well in the future.\n\n## 四个可复用亮点\n\n1. As far as I am concerned（替换 I think）\n2. which textbooks can hardly provide（非限定从句）\n3. as long as 引导条件（替换 if）\n4. do more good than harm（利弊结论万能句）",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "写作",
+    "模板",
+    "议论文"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4w-003",
+   "q": "四级应用文模板：书信 + 通知",
+   "a": "## 四类书信开头段（直接背）\n\n| 类型 | 开头句 |\n| --- | --- |\n| 建议信 | I am writing to share some suggestions on ______, which I hope you will find helpful. |\n| 感谢信 | I am writing to express my sincere gratitude for ______. |\n| 道歉信 | I am terribly sorry that I am unable to ______, and I am writing to make an apology. |\n| 邀请信 | I am writing to invite you to ______, which will be held ______. |\n\n## 中间段套路\n\n**建议信**（三条建议）：\n> First of all, it would be better if you ______. Besides, I strongly recommend that you ______. What's more, if I were you, I would ______.\n\n**感谢信**（细节 + 影响）：\n> Your timely help enabled me to ______. Without your kindness, I could never have ______.\n\n**道歉信**（原因 + 补救）：\n> The reason is that ______. To make up for it, I would like to ______.\n\n## 结尾 + 落款（全类型通用）\n\n> I am looking forward to your early reply.\n>\n> ```text\n> Yours sincerely,\n> Li Ming\n> ```\n\n## 通知格式\n\n```text\nNotice\n\nThere will be a ______(活动) organized by ______(主办) at ______(地点) on ______(时间). All students are welcome to participate. Please arrive 10 minutes early.\n\nStudents' Union\n```\n\n## 格式要点\n\n1. 称呼 Dear Sir or Madam, / Dear Mr. Smith,（**逗号**）\n2. recommend/suggest 后用虚拟：(should) + 动词原形\n3. **落款只能写 Li Ming**——写真实姓名按作弊处理",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "写作",
+    "书信",
+    "通知",
+    "应用文"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4w-004",
+   "q": "高分替换：把中学词汇升级成四级词汇",
+   "a": "## 词汇升级对照表\n\n| 中学词 | 四级升级 |\n| --- | --- |\n| I think | I firmly believe / As far as I am concerned |\n| very | exceedingly / remarkably |\n| many | numerous / a great number of |\n| people | individuals / citizens |\n| important | vital / significant / essential |\n| good | beneficial / rewarding |\n| bad | harmful / undesirable |\n| more and more | an increasing number of |\n| because | owing to / due to |\n| so | therefore / consequently |\n| get | obtain / acquire |\n| use | utilize / make use of |\n| help | assist / facilitate |\n| show | demonstrate / indicate |\n\n## 句型升级（每篇埋 2-3 个）\n\n1. **There is no doubt that...** 毫无疑问…（开头段）\n2. **It is + adj. + that...**：It is obvious that practice makes perfect.\n3. **not only...but also...**：Reading not only broadens our horizons but also enriches our minds.\n4. **Only in this way can we...**（倒装收尾，阅卷人心中的加分句）\n5. **It is...that... 强调**：It is cooperation that makes success possible.\n\n## 连接词升级（避免全篇 and/but/so）\n\n| 关系 | 升级连接词 |\n| --- | --- |\n| 递进 | What's more / In addition / Moreover / Besides |\n| 转折 | However / Nevertheless / On the contrary |\n| 举例 | For example / For instance / A case in point is |\n| 因果 | Therefore / Consequently / As a result |\n| 总结 | In short / To sum up / In conclusion |\n\n## 使用底线\n\n升级词必须**拼写绝对有把握**；一篇 10 处升级足够，通篇大词反而暴露背诵痕迹。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "写作",
+    "替换",
+    "高分"
+   ],
+   "r": []
+  },
+  {
+   "id": "c4w-005",
+   "q": "四级翻译：三步法 + 中国文化词库",
+   "a": "## 一句话结论\n\n四级翻译是**整段汉译英**（中国文化/历史/社会/发展主题，140-160 字，占 15%）：三步法保结构，词库保专有名词——按句给分，写一句赚一句。\n\n## 三步法\n\n1. **通读定调**：判断主题与主时态（历史→过去时；现状介绍→现在时）\n2. **逐句找主干**：中文爱省略主语——每句先补齐\"谁＋做什么\"\n3. **合并组句**：中文流水句用 which/who/分词短语收编，不要一句一个 and\n\n## 三大常用转换\n\n| 中文 | 英文处理 |\n| --- | --- |\n| 无主句（随着…的发展） | With the development of... |\n| 有…特点（有着5000年历史） | ...with a history of 5,000 years（介词短语后置） |\n| 不仅…还… | Not only...but also... |\n\n## 必背词库（四级翻译十年主题全覆盖）\n\n| 中文 | 英文 |\n| --- | --- |\n| 长城 | the Great Wall |\n| 故宫 | the Forbidden City |\n| 丝绸之路 | the Silk Road |\n| 四大发明 | the Four Great Inventions |\n| 春节 | the Spring Festival |\n| 中秋节 | the Mid-Autumn Festival |\n| 端午节 | the Dragon Boat Festival |\n| 饺子 | dumplings |\n| 灯笼 | lanterns |\n| 熊猫 | giant panda |\n| 京剧 | Peking Opera |\n| 书法 | calligraphy |\n| 剪纸 | paper cutting |\n| 黄河 / 长江 | the Yellow River / the Yangtze River |\n| 传统文化 | traditional culture |\n| 经济发展 | economic development |\n\n## 实战示例\n\n> 原文：春节是中国最重要的传统节日，通常在农历正月初一。一家人会团聚在一起吃年夜饭，孩子们还会收到压岁钱。\n\n> The Spring Festival is the most important traditional festival in China, usually falling on the first day of the first lunar month. Family members gather together for a reunion dinner, and children will receive lucky money.\n\n## 考场提醒\n\n- 不会的词用**上位词**绕：龙舟赛 → a kind of traditional boat race\n- 主谓一致和时态是白丢分，翻完花 2 分钟专查这两项",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "翻译",
+    "方法",
+    "词库"
+   ],
+   "r": []
+  }
+ ]
+}

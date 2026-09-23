@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2F6F5E"/>
+      <stop offset="1" stop-color="#3D8C77"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity=".20"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect x="0" y="0" width="512" height="300" rx="112" fill="url(#shine)"/>
+  <!-- 书本 + 对勾：知识已掌握 -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity=".97">
+    <path d="M128 152 h96 a36 36 0 0 1 36 36 v188 a28 28 0 0 0-28-28 H128 Z"/>
+    <path d="M384 152 h-96 a36 36 0 0 0-36 36 v188 a28 28 0 0 1 28-28 h104 Z"/>
+  </g>
+  <!-- 对勾徽标 -->
+  <circle cx="348" cy="344" r="72" fill="#FFFFFF"/>
+  <path d="M316 344 l22 22 44-46" fill="none" stroke="#2F6F5E" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

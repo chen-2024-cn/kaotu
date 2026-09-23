@@ -1,0 +1,102 @@
+{
+ "track": "job",
+ "id": "springboot",
+ "name": "Spring Boot",
+ "badge": "SB",
+ "color": "#4A7BA6",
+ "desc": "自动配置 / Starter / 启动流程",
+ "questions": [
+  {
+   "id": "springboot-001",
+   "q": "Spring Boot 自动配置的原理是什么？@SpringBootApplication 里有什么？",
+   "a": "## 一句话结论\n\n@SpringBootConfiguration + @EnableAutoConfiguration + @ComponentScan 三合一；自动配置靠 **AutoConfigurationImportSelector 读取 META-INF/spring/…AutoConfiguration.imports（2.7+）或 spring.factories**，再按 @Conditional 条件筛选装配。\n\n## 三个注解\n\n1. @SpringBootConfiguration：就是 @Configuration，标记配置类\n2. @ComponentScan：扫描当前包及子包的组件\n3. @EnableAutoConfiguration：核心，引入 AutoConfigurationImportSelector\n\n## 自动配置流程\n\n1. @EnableAutoConfiguration → @Import(AutoConfigurationImportSelector)\n2. selectImports → getAutoConfigurationEntry：\n   - 读候选：SpringFactoriesLoader 加载 imports 文件（Boot 2.7 起新文件，之前 spring.factories）\n   - 去重、排除（exclude 属性）\n   - **过滤**：OnClassCondition、OnBeanCondition、OnPropertyCondition 等\n3. 留下的配置类按 @AutoConfigureOrder/@AutoConfigureBefore/After 排序注册\n4. 配置类里的 @Bean 按条件创建，@ConfigurationProperties 绑定 application.yml\n\n## 条件注解家族\n\n- @ConditionalOnClass / OnMissingClass：类路径有无某类\n- @ConditionalOnBean / OnMissingBean：容器有无某 Bean\n- @ConditionalOnProperty：配置开关\n- @ConditionalOnWebApplication：是否 Web 环境\n\n## 举例\n\n引入 spring-boot-starter-web → 类路径有 DispatcherServlet → WebMvcAutoConfiguration 生效 → 内嵌 Tomcat + MVC 全套。\n\n## 面试追问\n\n- 追问：为什么自己的 Bean 能\"覆盖\"自动配置的？\n  答：自动配置大多带 @ConditionalOnMissingBean，用户先定义则自动配置退让。\n- 追问：2.7 为什么换 imports 文件？\n  答：spring.factories 全量加载慢且语义混杂，imports 只存自动配置类，启动更快。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "自动配置",
+    "EnableAutoConfiguration",
+    "SPI"
+   ],
+   "r": [
+    "springboot-002",
+    "spring-001"
+   ]
+  },
+  {
+   "id": "springboot-002",
+   "q": "自定义一个 Starter 需要哪些步骤？命名规范是什么？",
+   "a": "## 一句话结论\n\nStarter = 依赖聚合（pom）+ 自动配置模块；官方命名 spring-boot-starter-xxx，第三方 xxx-spring-boot-starter；核心是写 AutoConfiguration + @ConfigurationProperties + 注册到 imports 文件。\n\n## 结构\n\n```text\nmy-spring-boot-starter          # 空壳，只聚合依赖\n └── my-spring-boot-autoconfigure  # 真正的自动配置\n      ├── MyProperties.java        @ConfigurationProperties(\"my\")\n      ├── MyService.java\n      ├── MyAutoConfiguration.java @AutoConfiguration + @EnableConfigurationProperties\n      └── META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports\n```\n\n## 步骤\n\n1. 建 autoconfigure 模块，写 Properties（prefix 绑定 yml）\n2. 写 Service/组件，构造器注入 Properties\n3. @AutoConfiguration + @ConditionalOnClass/@ConditionalOnMissingBean 保护\n4. imports 文件写全限定类名（一行一个）\n5. starter 模块依赖 autoconfigure + 所需三方库\n6. 本地 mvn install 后业务项目引依赖即用\n\n## 最佳实践\n\n1. 所有 Bean 加 @ConditionalOnMissingBean，允许用户覆盖\n2. 配置项给合理默认值，文档化\n3. 用 spring-configuration-metadata 生成 yml 提示（annotation processor）\n\n## 面试追问\n\n- 追问：@ConfigurationProperties 和 @Value 区别？\n  答：前者类型安全、结构化、支持松散绑定与校验；后者适合零散单值。\n- 追问：自动配置类之间怎么排序？\n  答：@AutoConfigureBefore/After/Order，例如数据源要在 ORM 之前。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "Starter",
+    "自动配置",
+    "命名规范"
+   ],
+   "r": [
+    "springboot-001"
+   ]
+  },
+  {
+   "id": "springboot-003",
+   "q": "Spring Boot 的启动流程是怎样的？从 main 方法到容器就绪？",
+   "a": "## 一句话结论\n\nmain → new SpringApplication（推断应用类型、加载初始器与监听器）→ run：准备 Environment → 打印 banner → 创建 ApplicationContext → 准备上下文（加载主配置类）→ **refresh（IOC 核心：扫描、自动配置、Bean 创建）** → 启动内嵌 Web 容器 → 发就绪事件。\n\n## 关键阶段\n\n1. **new SpringApplication**：\n   - 推断 WebApplicationType（SERVLET/REACTIVE/NONE）\n   - 从 spring.factories 加载 ApplicationContextInitializer、ApplicationListener\n   - 推断主配置类（main 方法所在类）\n2. **run**：\n   - 启动计时、Headless 设置\n   - 触发 ApplicationStartingEvent\n   - 准备 Environment（读 yml/properties/环境变量/命令行），触发 EnvironmentPreparedEvent\n   - 创建上下文（AnnotationConfigServletWebServerApplicationContext）\n   - prepareContext：应用初始器、注册主配置类 BeanDefinition\n   - **refreshContext**：Spring 的 refresh 十二步 + 内嵌容器 onRefresh 创建 Tomcat\n   - afterRefresh → 触发 ApplicationStartedEvent → 调 Runner（CommandLineRunner/ApplicationRunner）→ ApplicationReadyEvent\n3. 内嵌容器启动在 refresh 的 onRefresh（ServletWebServerApplicationContext.finishRefresh 里 start）\n\n## 启动优化点\n\n1. 减少扫描范围、懒初始化 spring.main.lazy-initialization\n2. 排除无用 starter\n3. AOT/原生镜像（Boot 3 + GraalVM）\n4. 启动日志看各阶段耗时（debug 模式）\n\n## 面试追问\n\n- 追问：内嵌 Tomcat 什么时候创建的？\n  答：refresh 的 onRefresh 阶段创建 WebServer 实例，finishRefresh 时 start。\n- 追问：Runner 和监听器区别？\n  答：Runner 在就绪前同步执行适合初始化数据；监听器可监听全生命周期事件。",
+   "d": 4,
+   "f": "mid",
+   "t": [
+    "启动流程",
+    "SpringApplication",
+    "内嵌容器"
+   ],
+   "r": [
+    "springboot-001",
+    "spring-008"
+   ]
+  },
+  {
+   "id": "springboot-004",
+   "q": "application.yml 的配置加载顺序和优先级是什么？profile 怎么用？",
+   "a": "## 一句话结论\n\n优先级从高到低：命令行参数 > Java 系统属性 > OS 环境变量 > 包外 application-{profile}.yml > 包外 application.yml > 包内 application-{profile}.yml > 包内 application.yml；**profile 用 spring.profiles.active 激活，多环境配置靠它切**。\n\n## 加载位置（高→低）\n\n1. file:./config/*/ 、file:./config/、file:./ （项目目录外置）\n2. classpath:/config/、classpath:/ （jar 内）\n3. 同名位置下 {profile} 文件覆盖默认文件\n4. 命令行 --server.port=9000 最高\n5. @PropertySource 与随机值、占位符另算\n\n## profile 实践\n\n```yaml\nspring:\n  profiles:\n    active: dev\n---\nspring:\n  config:\n    activate:\n      on-profile: prod\nserver:\n  port: 8080\n```\n\n1. 多文档 yml 用 --- 分段 + on-profile\n2. 配置中心（Nacos/Apollo）优先级高于本地文件\n3. 敏感配置走环境变量或配置中心加密，不进代码库\n\n## 面试追问\n\n- 追问：bootstrap.yml 还有用吗？\n  答：Boot 2.4+ 默认不用；Spring Cloud 配置中心场景可开启 spring.cloud.bootstrap.enabled 或用 spring.config.import。\n- 追问：配置热更新怎么做？\n  答：@RefreshScope + /actuator/refresh，或配置中心监听推送。",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "配置优先级",
+    "profile",
+    "外部化配置"
+   ],
+   "r": [
+    "springboot-001"
+   ]
+  },
+  {
+   "id": "springboot-005",
+   "q": "Spring Boot 怎么实现优雅停机？",
+   "a": "## 一句话结论\n\n开启 server.shutdown=graceful + 设置 spring.lifecycle.timeout-per-shutdown-phase：停止接收新请求 → 等在途请求完成（超时强制）→ 关闭 Bean 与线程池；**K8s 场景配合 preStop + 就绪探针摘流量**。\n\n## 配置\n\n```yaml\nserver:\n  shutdown: graceful\nspring:\n  lifecycle:\n    timeout-per-shutdown-phase: 30s\n```\n\n## 原理\n\n1. WebServer 进入 graceful 状态：拒绝新连接/新请求（返回 503 或断开）\n2. 等待活跃请求计数归零或超时\n3. 触发 ContextClosedEvent：@PreDestroy、线程池 shutdown、MQ 消费者停止\n4. 自定义线程池要实现 SmartLifecycle 或注册为 Bean 让容器管理\n\n## 生产配套\n\n1. K8s：preStop sleep 几秒让端点摘除生效 + readiness 探针失败摘流量\n2. 注册中心：先反注册再停机（Nacos/Eureka 客户端自动）\n3. 定时任务/MQ：停机前停止拉取，处理完在手消息\n4. 长连接：主动通知客户端重连\n\n## 面试追问\n\n- 追问：线程池怎么优雅关？\n  答：shutdown() 拒新任务等存量 → awaitTermination → shutdownNow 兜底；SmartLifecycle 的 stop(Runnable) 里做。\n- 追问：kill -9 会怎样？\n  答：无优雅过程，在途请求中断、消息可能重复；生产禁用，用 SIGTERM。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "优雅停机",
+    "生命周期",
+    "健康检查"
+   ],
+   "r": [
+    "springboot-003"
+   ]
+  },
+  {
+   "id": "springboot-006",
+   "q": "Spring Boot 3 相比 2 有哪些重要变化？迁移要注意什么？",
+   "a": "## 一句话结论\n\nBoot 3 基线 JDK 17、**javax.* 全面换 jakarta.***、原生镜像一等公民、可观测性统一（Micrometer Observation）、配置导入取代 bootstrap、安全配置 lambda DSL；迁移最大工作量在 javax→jakarta 与三方库兼容。\n\n## 关键变化\n\n1. JDK 17 基线（可用 21）\n2. javax.servlet/persistence/validation → jakarta.*\n3. GraalVM native-image 官方支持（AOT 处理）\n4. Micrometer Observation API 统一指标/追踪\n5. spring.config.import 替代 bootstrap.yml\n6. Security 配置全面 lambda DSL，WebSecurityConfigurerAdapter 移除\n7. 新模块：Spring Boot 3.x 的虚拟线程支持（spring.threads.virtual.enabled，Boot 3.2+）\n\n## 迁移清单\n\n1. 升 JDK 17+，改编译与镜像\n2. 全局替换 javax→jakarta（注意 javax.sql 等 JDK 自带的不换）\n3. 升级三方 starter 到 Boot 3 兼容版\n4. 检查反射/序列化配置（native 场景需 reachability metadata）\n5. 安全配置改 lambda\n6. 跑全量回归\n\n## 面试追问\n\n- 追问：虚拟线程对 Spring 的影响？\n  答：IO 密集吞吐大增；但 synchronized 块内 pinning、ThreadLocal 滥用要改；事务/连接池模型不变。\n- 追问：native 镜像的坑？\n  答：反射/动态代理/资源需提前登记，启动快但峰值性能略低于 JIT 预热后。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "Boot3",
+    "Jakarta",
+    "原生镜像"
+   ],
+   "r": [
+    "springboot-001"
+   ]
+  }
+ ]
+}

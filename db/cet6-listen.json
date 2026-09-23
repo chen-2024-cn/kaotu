@@ -1,0 +1,85 @@
+{
+ "track": "cet6",
+ "id": "cet6-listen",
+ "name": "听力技巧",
+ "badge": "听力",
+ "color": "#4A80C4",
+ "desc": "讲座 2 分题主攻略 · 信号词 · 预读节奏",
+ "questions": [
+  {
+   "id": "c6l-001",
+   "q": "六级听力结构与分值分布：分都花在哪？",
+   "a": "## 一句话结论\n\n六级听力 25 题占 35%：长对话 8 题（每题 1 分）+ 篇章 7 题（每题 1 分）+ **讲座/讲话 10 题（每题 2 分）**——讲座分值占听力近一半，是主攻方向。\n\n## 结构表\n\n| 题型 | 篇数 | 题数 | 每题分值 | 占比感受 |\n| --- | --- | --- | --- | --- |\n| 长对话 | 2 | 8 | 1 分 | 基础分 |\n| 听力篇章 | 2 | 7 | 1 分 | 基础分 |\n| 讲座/讲话 | 3 | 10 | **2 分** | ★ 决胜区 |\n\n## 三条铁律\n\n1. **录音只播一遍**，没有回头路——犹豫就果断选，绝不空题\n2. **问题不印在试卷上**，只印 4 个选项——问题必须靠耳朵抓（常问 what/why/what does the speaker suggest）\n3. 听力结束后**立即收答题卡 1**——必须边听边涂卡，没有集中涂卡时间\n\n## 备考优先级\n\n讲座/讲话（学术独白，2 分/题）＞ 篇章 ＞ 长对话。真题训练时按分值权重分配时间。",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "听力",
+    "结构",
+    "策略"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6l-002",
+   "q": "长对话：抓问答对与转折处",
+   "a": "## 一句话结论\n\n长对话＝两人多轮问答，**答案几乎都藏在\"回答句\"里**，尤其是含 but/however/actually 的转折句和 suggest/recommend 的建议句。\n\n## 高频场景（先背场景词，听懂率翻倍）\n\n校园（选课/论文/图书馆）· 职场（面试/汇报/加薪）· 旅行（订票/改签/酒店）· 健康（看病/健身）· 租房（看房/押金/维修）\n\n## 出题规律\n\n| 位置 | 常考内容 |\n| --- | --- |\n| 开头 1-2 轮 | 对话主题 / 人物关系 / 谈话目的 |\n| 中间问答对 | 细节（时间/地点/原因/数字） |\n| 转折句后 | 真实意图、态度反转 |\n| 结尾 | 接下来要做什么 (What will the man probably do next?) |\n\n## 三种必考问法\n\n1. What does the man **suggest** the woman do? —— 建议表达：Why not... / You'd better... / How about... / If I were you...\n2. What do we learn **about**...? —— 信息细节\n3. What is the **probable relationship** between the speakers? —— 靠场景词判断（menu→服务员；assignment→师生）\n\n## 技巧\n\n- 男女对话中，**女方的观点/建议被考概率更高**\n- 一方复述另一方信息时（So you mean...），复述句就是答案点",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "听力",
+    "长对话"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6l-003",
+   "q": "听力篇章：首三句定主旨，顺序出题",
+   "a": "## 一句话结论\n\n篇章（独白）以说明文和记叙文为主：**首三句几乎必含主旨题答案**，细节题按文章顺序出题，边听边对照选项位置。\n\n## 体裁与套路\n\n| 体裁 | 结构 | 常考 |\n| --- | --- | --- |\n| 说明文 | 现象 → 原因 → 影响 | 主旨、原因、数据 |\n| 记叙文 | 背景 → 冲突 → 解决 | 情节转折、人物动机 |\n| 科普文 | 旧认知 → 新发现 → 意义 | 研究结论、与常识的差异 |\n\n## 四类高频细节\n\n1. **数字/时间**：听到即与选项对号（注意单位换算与\"前后\"关系）\n2. **因果**：because / due to / as a result 后是答案\n3. **最高级/唯一**：the most / the only / first —— 强调处必考\n4. **举例后**：for example / such as 引出的内容常对应一题\n\n## 主旨题解法\n\n- 问题多为 What is the passage **mainly about**?\n- 答案在开头 1-3 句；选项若只覆盖中间某细节 = 以偏概全，排除\n\n## 防坑\n\n- 原词重现的选项≠正确答案，**同义改写**才是（原文 say yes → 选项 agree）\n- 听到与选项完全一样的词反而要警惕是干扰",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "听力",
+    "篇章"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6l-004",
+   "q": "讲座/讲话：2 分题的学术听力攻略",
+   "a": "## 一句话结论\n\n讲座/讲话（Lecture/Talk）是六级特有的**学术独白**，10 题每题 2 分、占听力近半——按\"主题→观点→例证→结论\"四段论听结构，抓信号词就能对号入座。\n\n## 讲座的固定骨架\n\n```text\n开场引入（主题句，考主旨题）\n  ↓\n核心观点 / 研究结论（考态度与观点题）\n  ↓\n数据与例证（考细节题，数字敏感）\n  ↓\n结论与展望（考推断，结尾最后一题）\n```\n\n## 五大信号词（听到就竖耳朵）\n\n| 信号词 | 后面跟的是 |\n| --- | --- |\n| Today I want to talk about... | 全文主题 |\n| in fact / actually / surprisingly | 反常识重点（最爱考） |\n| the point is / what matters is | 核心观点 |\n| for instance / a case in point | 例证 → 对应细节题 |\n| in conclusion / to sum up | 结论 → 最后一题 |\n\n## 速记法（考场上真的能用）\n\n- 名词只记**首字母**＋数字直接记：`edu → inc 30% 2019`\n- 转折用箭头 ↓↑，因果用 →\n- 每段开头记 1-2 个词当地图，做题时回看\n\n## 训练素材\n\n六级真题讲座语速约 150 词/分钟，与 TED/VOA Learning 慢速相当；每天精听 1 篇真题讲座（听→做题→对照原文跟读）效果最快。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "听力",
+    "讲座",
+    "重点"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6l-005",
+   "q": "听力同义替换：正确选项从不原词重现",
+   "a": "## 一句话结论\n\n六级听力正确选项＝录音原文的**同义改写**；训练的核心就是积累\"原文说法 ↔ 选项说法\"替换对。\n\n## 高频替换对照表\n\n| 录音里说 | 选项里写 |\n| --- | --- |\n| run out of / be short of | lack / insufficient |\n| put off / call off | postpone / cancel |\n| come up with | propose / devise |\n| look into | investigate / examine |\n| cut down on | reduce / decrease |\n| figure out | work out / solve |\n| a great many | numerous / a host of |\n| not...until | only when... |\n\n## 观点态度替换\n\n- 录音 I'm all for it → 选项 supportive\n- 录音 It's hard to say → 选项 reserved / uncertain\n- 录音 I can't stand... → 选项 strongly opposed\n\n## 因果方向改写（易错）\n\n- 原文 A caused B → 选项 B resulted from A（方向翻转但意思同，正确）\n- 选项若写成 A resulted from B → 方向反了，错误\n\n## 三个必被考的信号词族\n\n1. **转折后**：but / however / actually —— 前面说的都不算，后面才是真话\n2. **强调处**：especially / particularly / above all\n3. **否定转移**：远 not nearly... / hardly / rarely —— 选项常改写成肯定句考你是否听反",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "听力",
+    "同义替换"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6l-006",
+   "q": "预读选项与考场节奏：听力是抢出来的",
+   "a": "## 一句话结论\n\n六级听力一半靠听，一半靠**预读**：利用读 direction 和题间空档抢先读选项、划差异词、猜问题，把\"盲听\"变\"验证式听\"。\n\n## 预读三步（direction 播放时完成）\n\n1. **竖读四选项找差异词**：四个选项不同之处就是问题焦点（都在说地点→问 Where）\n2. **划关键信息**：名词主语 / 动词 / 数字 / 否定词\n3. **反推问题**：选项都是 Because... → 问原因；都是动词短语 → 问建议/行为\n\n## 选项形态 → 问题类型速判\n\n| 选项长这样 | 问题多半是 |\n| --- | --- |\n| At a library / In a hotel | Where does...take place? |\n| Teacher and student | What's the relationship? |\n| Because he missed the bus | Why did...? |\n| By taking a part-time job | How will...? |\n| Book a ticket in advance | What does the speaker suggest? |\n\n## 考场节奏铁律\n\n- **边听边涂卡**：听力结束立即收答题卡 1，没有补涂时间\n- 一题没听清 → **立刻放弃跟下一题**，绝不回头纠结（连环丢分是听力大忌）\n- 每篇读题干的时间差约 15-18 秒，够预读下一篇前 2 题\n- 开头 direction 约 40 秒：够预读第一篇对话前 4 题\n\n## 平时训练法\n\n真题五遍法：①做题 ②逐句精听查漏 ③对照原文标出没听出的连读/弱读 ④跟读模仿 ⑤隔周重听错题音频。连读弱读是听不懂的第一元凶。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "听力",
+    "技巧",
+    "考场"
+   ],
+   "r": []
+  }
+ ]
+}

@@ -1,0 +1,154 @@
+{
+ "track": "cet6",
+ "id": "cet6-vocab",
+ "name": "六级高频词",
+ "badge": "词汇",
+ "color": "#2F5FA8",
+ "desc": "学术场景核心词 · 一词一卡 · 搭配同义全收录",
+ "questions": [
+  {
+   "id": "c6v-001",
+   "q": "deteriorate",
+   "a": "## 卡片\n\n**deteriorate**　/dɪˈtɪəriəreɪt/　v.\n\n恶化，变坏（情况/健康/关系）\n\n## 常考搭配\n\n- air quality deteriorated 空气质量恶化\n- deteriorate into 恶化为、退化成\n- deteriorating health 日益恶化的健康\n\n## 真题语境\n\n> Relations between the two countries **deteriorated** sharply after the incident.\n> 事件发生后两国关系急剧恶化。\n\n## 同义替换\n\nworsen / decline / degenerate（反义：improve / ameliorate）\n\n## 记忆\n\nde(向下) + terior(磨损，同 trite 磨旧的) + ate → 不断磨损向下 → 恶化。名 deterioration。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "d开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-002",
+   "q": "indispensable",
+   "a": "## 卡片\n\n**indispensable**　/ˌɪndɪˈspensəbl/　adj.\n\n必不可少的，必需的\n\n## 常考搭配\n\n- be indispensable to/for 对…不可缺少\n- play an indispensable role 发挥不可替代的作用\n- an indispensable tool 必备工具\n\n## 真题语境\n\n> Mobile payment has become **indispensable** to daily life in China.\n> 移动支付已成为中国日常生活中不可或缺的一部分。\n\n## 同义替换\n\nessential / vital / crucial / necessary\n\n## 记忆\n\nin(否定) + dispensable(可省的，dispense 分发/免除) → 不能省的 → 必不可少。翻译写作双高频。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "i开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-003",
+   "q": "ambiguous",
+   "a": "## 卡片\n\n**ambiguous**　/æmˈbɪɡjuəs/　adj.\n\n模棱两可的，含糊不清的\n\n## 常考搭配\n\n- an ambiguous statement 含糊的陈述\n- remain ambiguous 仍不明确\n- ambiguous attitude 暧昧态度\n\n## 真题语境\n\n> His reply was deliberately **ambiguous**, leaving reporters guessing.\n> 他的回答故意模棱两可，让记者们捉摸不透。\n\n## 同义替换\n\nvague / unclear / equivocal（反义：explicit 明确的 / unambiguous）\n\n## 记忆\n\nambi(两边，同 ambulance 的 ambi) + ig(驱动，同 agent) → 往两边走 → 模棱两可。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "a开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-004",
+   "q": "prevalent",
+   "a": "## 卡片\n\n**prevalent**　/ˈprevələnt/　adj.\n\n流行的，普遍的，盛行的\n\n## 常考搭配\n\n- be prevalent among 在…中盛行\n- a prevalent belief 普遍的看法\n- more prevalent than ever 前所未有地普遍\n\n## 真题语境\n\n> Obesity is increasingly **prevalent** among teenagers.\n> 肥胖在青少年中日渐普遍。\n\n## 同义替换\n\nwidespread / common / rampant(猖獗，贬义) / pervasive\n\n## 记忆\n\npre(在前) + val(价值/力量，同 value) → 走在前面的力量 → 盛行。名 prevalence。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "p开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-005",
+   "q": "paradox",
+   "a": "## 卡片\n\n**paradox**　/ˈpærədɒks/　n.\n\n悖论，自相矛盾的人或事\n\n## 常考搭配\n\n- the paradox of... …的悖论\n- seem like a paradox 看似矛盾\n- a paradoxical situation 自相矛盾的局面\n\n## 真题语境\n\n> It is a **paradox** that the richest country has so much poverty.\n> 最富有的国家却有如此多的贫困，这是一个悖论。\n\n## 同义替换\n\ncontradiction / inconsistency（adj. paradoxical 看似矛盾实则有理的）\n\n## 记忆\n\npara( beside 旁) + dox(观点，同 orthodox 正统的) → 站在常识旁边的观点 → 悖论。六级阅读态度题常见。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "p开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-006",
+   "q": "chronic",
+   "a": "## 卡片\n\n**chronic**　/ˈkrɒnɪk/　adj.\n\n（疾病）慢性的；（问题）长期难解的\n\n## 常考搭配\n\n- chronic disease 慢性病（反义 acute 急性的）\n- chronic shortage 长期短缺\n- chronic unemployment 长期失业\n\n## 真题语境\n\n> The city suffers from a **chronic** shortage of housing.\n> 这座城市长期饱受住房短缺之苦。\n\n## 同义替换\n\npersistent / long-standing / enduring\n\n## 记忆\n\nchron(时间，同 chronicle 编年史/chronology 年代学) → 时间长 → 慢性的、长期的。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "c开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-007",
+   "q": "incentive",
+   "a": "## 卡片\n\n**incentive**　/ɪnˈsentɪv/　n.\n\n激励，刺激，动力\n\n## 常考搭配\n\n- financial incentives 经济激励\n- provide/offer an incentive to do 提供做…的动力\n- an incentive for reform 改革的动力\n\n## 真题语境\n\n> Tax breaks give companies an **incentive** to invest in green technology.\n> 税收减免激励企业投资绿色技术。\n\n## 同义替换\n\nmotivation / stimulus / impetus / spur\n\n## 记忆\n\nin + cent(唱歌，同 chant) → 古罗马用歌声鼓舞士兵 → 激励。经济类文章高频词。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "i开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-008",
+   "q": "recession",
+   "a": "## 卡片\n\n**recession**　/rɪˈseʃn/　n.\n\n（经济）衰退，不景气\n\n## 常考搭配\n\n- economic recession 经济衰退\n- enter/fall into a recession 陷入衰退\n- recover from recession 从衰退中复苏\n\n## 真题语境\n\n> Many small businesses collapsed during the **recession**.\n> 许多小企业在经济衰退期间倒闭。\n\n## 同义替换\n\ndownturn / slump / depression(大萧条，程度更重)（反义 boom 繁荣）\n\n## 记忆\n\nre(回) + cess(走，同 process/cessation) + ion → 经济往回走 → 衰退。新闻听力高频。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "r开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-009",
+   "q": "feasible",
+   "a": "## 卡片\n\n**feasible**　/ˈfiːzəbl/　adj.\n\n可行的，行得通的\n\n## 常考搭配\n\n- a feasible plan/solution 可行的方案\n- technically feasible 技术上可行\n- economically feasible 经济上划算\n\n## 真题语境\n\n> The committee will study whether the proposal is **feasible**.\n> 委员会将研究该提案是否可行。\n\n## 同义替换\n\nviable / practicable / workable（反义 infeasible / impractical）\n\n## 记忆\n\nfeas(做，同 feat 功绩) + ible(能…的) → 能做的 → 可行。写作提建议必备：a feasible measure。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "f开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-010",
+   "q": "profound",
+   "a": "## 卡片\n\n**profound**　/prəˈfaʊnd/　adj.\n\n深刻的，深远的；知识渊博的\n\n## 常考搭配\n\n- have a profound impact on 对…影响深远\n- profound changes 深刻变化\n- a profound insight 深刻的见解\n\n## 真题语境\n\n> The Internet has had a **profound** impact on the way we communicate.\n> 互联网深刻改变了我们的交流方式。\n\n## 同义替换\n\ndeep / far-reaching / intense（反义 superficial 表面的）\n\n## 记忆\n\npro(向前) + found(底部，同 foundation) → 深入到水底 → 深刻。翻译「影响深远」首选搭配。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "p开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-011",
+   "q": "superficial",
+   "a": "## 卡片\n\n**superficial**　/ˌsuːpəˈfɪʃl/　adj.\n\n表面的，肤浅的\n\n## 常考搭配\n\n- a superficial understanding 肤浅的理解\n- superficial scratches 表面擦伤\n- superficial resemblance 表面相似\n\n## 真题语境\n\n> His knowledge of the subject is only **superficial**.\n> 他对该主题的了解只停留在表面。\n\n## 同义替换\n\nshallow / skin-deep / cursory（反义 profound 深刻的）\n\n## 记忆\n\nsuper(上面) + fic(面，同 face/surface) + ial → 只在面上的 → 肤浅。与 profound 是六级经典反义对。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "s开头"
+   ],
+   "r": []
+  },
+  {
+   "id": "c6v-012",
+   "q": "contemplate",
+   "a": "## 卡片\n\n**contemplate**　/ˈkɒntəmpleɪt/　v.\n\n沉思，深思；考虑，打算\n\n## 常考搭配\n\n- contemplate doing sth 考虑做某事（不接 to do）\n- contemplate the future 思考未来\n- worth contemplating 值得深思\n\n## 真题语境\n\n> She **contemplated** giving up her job to travel.\n> 她认真考虑辞职去旅行。\n\n## 同义替换\n\nconsider / ponder / meditate / deliberate\n\n## 记忆\n\ncon(共同) + templ(神庙，同 temple) → 在神庙中静思 → 沉思。注意 + doing 的搭配考法。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "高频词",
+    "c开头"
+   ],
+   "r": []
+  }
+ ]
+}

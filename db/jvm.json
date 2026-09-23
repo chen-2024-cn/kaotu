@@ -1,0 +1,169 @@
+{
+ "track": "job",
+ "id": "jvm",
+ "name": "JVM",
+ "badge": "VM",
+ "color": "#7A5AA6",
+ "desc": "内存结构 / 类加载 / GC / 调优排查",
+ "questions": [
+  {
+   "id": "jvm-001",
+   "q": "JVM 运行时数据区是怎么划分的？哪些区域会 OOM？",
+   "a": "## 一句话结论\n\n运行时数据区 = 堆 + 方法区（元空间）+ 虚拟机栈 + 本地方法栈 + 程序计数器；**线程共享的堆和元空间会 OOM，线程私有的栈会 StackOverflowError（栈可动态扩展时也会 OOM）**。\n\n## 区域划分\n\n| 区域 | 共享 | 存什么 | 异常 |\n| --- | --- | --- | --- |\n| 堆 | 是 | 对象实例、数组 | OutOfMemoryError: Java heap space |\n| 方法区/元空间 | 是 | 类信息、常量池、静态变量 | OOM: Metaspace |\n| 虚拟机栈 | 否 | 栈帧（局部变量表、操作数栈、返回地址） | StackOverflowError |\n| 本地方法栈 | 否 | native 方法栈帧 | StackOverflowError |\n| 程序计数器 | 否 | 当前字节码行号 | 唯一不会 OOM 的区域 |\n\n## 关键点\n\n1. JDK 8 起永久代被**元空间**取代，使用本地内存，默认无上限（受物理内存限制），可用 -XX:MaxMetaspaceSize 限制\n2. 栈帧随方法调用入栈、返回出栈，无需 GC\n3. 对象不一定在堆上：逃逸分析 + 标量替换可让对象栈上分配（HotSpot 目前栈上分配未完全实现，主要靠逃逸分析做同步消除/标量替换）\n\n## 面试追问\n\n- 追问：直接内存算运行时数据区吗？\n  答：不算，是 JVM 管理的堆外内存（ByteBuffer.allocateDirect），受 -XX:MaxDirectMemorySize 限制，OOM 时表现为 Direct buffer memory。\n- 追问：方法区和元空间什么关系？\n  答：方法区是规范概念，元空间是 HotSpot 的实现（JDK 8+）。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "JVM内存",
+    "运行时数据区",
+    "OOM"
+   ],
+   "r": [
+    "jvm-002",
+    "jvm-004"
+   ]
+  },
+  {
+   "id": "jvm-002",
+   "q": "对象在堆里的内存布局是怎样的？对象头里有什么？",
+   "a": "## 一句话结论\n\n对象 = 对象头（Mark Word + 类型指针 [+ 数组长度]）+ 实例数据 + 对齐填充；Mark Word 存哈希码、GC 年龄、锁状态标志，是 synchronized 锁升级的载体。\n\n## 布局\n\n1. **对象头**：\n   - Mark Word（64 位）：hashCode、GC 分代年龄、锁标志位、偏向线程 ID\n   - 类型指针：指向方法区的类元数据（开启指针压缩后 4 字节）\n   - 数组才有：长度\n2. **实例数据**：字段内容，按 4/8 字节对齐规则排列（父类字段在前，long/double 不一定 8 字节对齐取决于 CompactFields）\n3. **对齐填充**：对象大小是 8 字节的倍数\n\n## 指针压缩\n\n- -XX:+UseCompressedOops 默认开启（堆 < 32G 时）\n- 用 4 字节存引用，左移 3 位还原，省内存\n- 堆超过 32G 压缩失效，所以\"32G 内存临界点\"说法由此而来\n\n## 面试追问\n\n- 追问：一个 new Object() 占多少字节？\n  答：12 字节头（压缩后）+ 0 实例 + 4 填充 = 16 字节。\n- 追问：Mark Word 里锁状态怎么变的？\n  答：无锁 → 偏向 → 轻量级（CAS 自旋）→ 重量级（Monitor），见 [[concurrent-002]]。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "对象头",
+    "内存布局",
+    "指针压缩"
+   ],
+   "r": [
+    "jvm-001"
+   ]
+  },
+  {
+   "id": "jvm-003",
+   "q": "类加载过程是怎样的？双亲委派模型是什么、为什么要打破？",
+   "a": "## 一句话结论\n\n类加载 = 加载 → 验证 → 准备 → 解析 → 初始化；双亲委派让父加载器优先加载，保证类唯一性与核心 API 安全；**JDBC/SPI、Tomcat、OSGi 等场景必须打破委派**。\n\n## 加载五阶段\n\n1. **加载**：读字节流，生成 Class 对象\n2. **验证**：文件格式、元数据、字节码、符号引用校验\n3. **准备**：静态变量赋**默认值**（不是代码里的值），static final 常量直接赋值\n4. **解析**：符号引用 → 直接引用\n5. **初始化**：执行 <clinit>，静态块与静态变量按源码顺序赋值\n\n## 双亲委派\n\n```text\nBootstrap(核心库 rt.jar)\n   ↑\nExtension/Platform(扩展库)\n   ↑\nApplication(classpath)\n   ↑\n自定义 ClassLoader\n```\n\n- 优点：避免重复加载、防止核心类被篡改（自己写 java.lang.String 不会被加载）\n- 打破方式：重写 loadClass 而非 findClass；Thread ContextClassLoader 反向委托\n\n## 为什么打破\n\n1. **SPI**：JDBC 的 Driver 由 Bootstrap 加载的 DriverManager 调用，但实现在 classpath，只能靠线程上下文加载器反向加载\n2. **Tomcat**：webapp 隔离，每个应用优先用自己的加载器，避免互相污染\n3. **热部署/OSGi**：网状委派实现模块级替换\n\n## 面试追问\n\n- 追问：什么时候触发初始化？\n  答：new、读写静态字段（非 final 常量）、调静态方法、反射、初始化子类先初始化父类、main 所在类。\n- 追问：static final String 常量会触发初始化吗？\n  答：不会，编译期已内联进调用方常量池。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "类加载",
+    "双亲委派",
+    "ClassLoader"
+   ],
+   "r": [
+    "jvm-001"
+   ]
+  },
+  {
+   "id": "jvm-004",
+   "q": "如何判断对象可以回收？可达性分析的 GC Roots 有哪些？",
+   "a": "## 一句话结论\n\n现代 JVM 用可达性分析而非引用计数：从 GC Roots 出发不可达的对象即可回收；GC Roots 包括栈中引用、静态变量、常量、Monitor 锁持有对象、JNI 引用等。\n\n## 为什么不用引用计数\n\n循环引用无法回收（A↔B），且每次赋值维护计数开销大。\n\n## GC Roots 清单\n\n1. 虚拟机栈中局部变量表引用的对象\n2. 方法区静态变量引用的对象\n3. 方法区常量引用的对象（JDK 8 后运行时常量池在堆，仍算）\n4. synchronized 持有的对象\n5. JNI native 方法引用\n6. JVM 内部引用（Null、异常类、系统类加载器等）\n7. 被同步块持有的对象、跨代引用（记忆集记录）\n\n## 引用强度四级\n\n| 引用 | 回收时机 | 用途 |\n| --- | --- | --- |\n| 强 | 不回收 | 普通对象 |\n| 软 | 内存不足时 | 缓存 |\n| 弱 | 下次 GC 就回收 | WeakHashMap、ThreadLocalMap 的 key |\n| 虚 | 随时，仅通知 | 跟踪回收（Cleaner） |\n\n## 面试追问\n\n- 追问：跨代引用怎么解决？\n  答：记忆集/卡表，老年代对象引用新生代时记录卡片，Young GC 把脏卡当根。\n- 追问：finalize 还会执行吗？\n  答：可达性分析不可达后先标记一次，若重写了 finalize 且未被执行过，进 F-Queue 执行一次自救机会；JDK 9 起不推荐，用 Cleaner。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "GC",
+    "可达性分析",
+    "GC Roots"
+   ],
+   "r": [
+    "jvm-005",
+    "jvm-006"
+   ]
+  },
+  {
+   "id": "jvm-005",
+   "q": "垃圾回收算法有哪些？分代收集是怎么设计的？",
+   "a": "## 一句话结论\n\n基础算法三种：标记-清除（碎片）、复制（浪费空间但快）、标记-整理（无碎片但慢）；分代收集按对象年龄分区，**新生代用复制，老年代用标记-清除/整理**。\n\n## 三种算法对比\n\n| 算法 | 优点 | 缺点 |\n| --- | --- | --- |\n| 标记-清除 | 简单 | 内存碎片、分配慢 |\n| 复制 | 无碎片、效率高 | 浪费一半空间 |\n| 标记-整理 | 无碎片 | 移动对象成本高 |\n\n## 分代设计\n\n1. **Eden : S0 : S1 = 8:1:1**，对象先在 Eden，熬过一次 Young GC 进 Survivor，年龄 +1\n2. 默认年龄 15（-XX:MaxTenuringThreshold）进老年代\n3. 动态年龄判定：Survivor 中相同年龄对象总和超过 Survivor 一半，年龄 ≥ 该值的直接晋升\n4. 大对象直接进老年代（-XX:PretenureSizeThreshold）\n5. 空间分配担保：Young GC 前检查老年代连续空间是否够，不够看是否允许担保失败 Full GC\n\n## 面试追问\n\n- 追问：为什么 Survivor 要两个？\n  答：一个永远空着做复制目标，解决碎片；只设一个 Eden+S 则每次 GC 后 Survivor 满无处复制。\n- 追问：为什么是 8:1:1？\n  答：统计上 98% 对象朝生夕死，一次 GC 后存活约 1%，刚好放得下 S 区。",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "GC算法",
+    "分代",
+    "标记清除",
+    "复制"
+   ],
+   "r": [
+    "jvm-004",
+    "jvm-006"
+   ]
+  },
+  {
+   "id": "jvm-006",
+   "q": "CMS 和 G1 的区别？G1 为什么能做到可预测停顿？",
+   "a": "## 一句话结论\n\nCMS 是老年代并发收集器，追求低停顿但有碎片、并发失败会退化 Serial Old；G1 把堆切成 Region，**整体标记-整理、局部复制**，靠回收价值排序 + 停顿预测模型控制停顿时间。\n\n## CMS 四阶段\n\n1. 初始标记（STW，只标 GC Roots 直连）\n2. 并发标记（与用户线程并行）\n3. 重新标记（STW，修正并发期间变动）\n4. 并发清除（不清理碎片）\n\n缺点：碎片、并发模式失败（Concurrent Mode Failure）、CPU 敏感。\n\n## G1 设计\n\n1. **Region 化**：堆分成 2048 个左右等大小 Region（Eden/Survivor/Old/Humongous）\n2. **可预测停顿**：维护每个 Region 的回收价值（回收空间/耗时），-XX:MaxGCPauseMillis 默认 200ms，每次只挑价值最高的若干 Region 回收（Garbage First 得名）\n3. **标记**：初始标记 → 并发标记 → 最终标记（STW 处理 SATB 写屏障记录）→ 筛选回收\n4. **无碎片**：Region 间复制即整理\n5. SATB（Snapshot-At-The-Beginning）：并发标记开始时的快照 + 写屏障记录新引用，保证不漏标\n\n## 对比表\n\n| 维度 | CMS | G1 |\n| --- | --- | --- |\n| 堆布局 | 连续分代 | Region |\n| 碎片 | 有 | 无 |\n| 停顿控制 | 不可控 | 目标停顿可设 |\n| 适用 | JDK 8 低延迟 | JDK 9+ 默认 |\n\n## 面试追问\n\n- 追问：G1 什么时候退化为 Full GC？\n  答：Mixed GC 跟不上分配速度（to-space exhausted）、大对象分配失败等，退化为单线程 Serial Old（JDK 10 后并行）。\n- 追问：ZGC 和 G1 区别？\n  答：ZGC 用着色指针 + 读屏障，并发整理，停顿 < 1ms 且与堆大小无关；JDK 15 正式可用。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "CMS",
+    "G1",
+    "收集器",
+    "Region"
+   ],
+   "r": [
+    "jvm-005",
+    "jvm-007"
+   ]
+  },
+  {
+   "id": "jvm-007",
+   "q": "线上 CPU 100% 或频繁 Full GC，你的排查思路是什么？",
+   "a": "## 一句话结论\n\n先定位是 CPU 还是内存问题：CPU 用 top → jstack 找热点线程栈；内存用 jstat 看 GC 频率 → dump 堆 → MAT/VisualVM 找支配树大头；**先保留现场再重启**。\n\n## CPU 100% 排查\n\n```bash\ntop -Hp <pid>            # 找占用高的线程 tid\nprintf '%x\\n' <tid>      # 转 16 进制\njstack <pid> | grep -A 30 <nid>   # 定位到代码行\n```\n\n常见根因：死循环、正则回溯、频繁 GC（GC 线程占 CPU）、序列化大对象。\n\n## 频繁 Full GC 排查\n\n1. `jstat -gcutil <pid> 1000`：看 FGCC 增速、OU 是否持续高位\n2. 若 OU 降不下来 → 内存泄漏：`jmap -dump:live,format=b,file=heap.hprof <pid>`\n3. MAT 看 Dominator Tree / Leak Suspects，找大对象与 GC Roots 引用链\n4. 若 OU 能降但频率高 → 大对象/晋升过快：调大堆、检查 Survivor、看是否有大数组/大集合\n\n## 常见泄漏源\n\n- 静态集合只加不删\n- ThreadLocal 不 remove（线程池场景）\n- 未关闭的连接/流/监听器\n- 缓存无淘汰策略\n\n## 面试追问\n\n- 追问：dump 会影响线上吗？\n  答：会 STW，堆越大停顿越久；优先用 -XX:+HeapDumpOnOutOfMemoryError 自动 dump，或低峰期操作。\n- 追问：怎么预防？\n  答：GC 日志 + 监控告警（FGC 次数、老年代水位）、代码评审关注集合生命周期、压测覆盖内存场景。",
+   "d": 4,
+   "f": "high",
+   "t": [
+    "排查",
+    "jstack",
+    "jmap",
+    "GC日志"
+   ],
+   "r": [
+    "jvm-006",
+    "jvm-008"
+   ]
+  },
+  {
+   "id": "jvm-008",
+   "q": "JVM 常用调优参数有哪些？你怎么给一个新服务定初始配置？",
+   "a": "## 一句话结论\n\n核心是\"堆大小固定 + 新生代比例 + 收集器选择 + GC 日志\"四件套；先按业务画像估堆，再靠压测和 GC 日志迭代，**不要一上来就抄别人的参数**。\n\n## 常用参数\n\n```bash\n-Xms4g -Xmx4g                # 堆初始=最大，避免动态扩缩\n-Xmn2g                        # 新生代（或用 -XX:NewRatio）\n-XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m\n-XX:+UseG1GC -XX:MaxGCPauseMillis=200\n-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/dump/\n-Xlog:gc*:file=/data/log/gc.log:time,uptime:filecount=5,filesize=20M   # JDK9+\n```\n\n## 定配置的流程\n\n1. 估对象规模：QPS × 单请求对象大小 × 存活时间，留 2~3 倍余量\n2. 堆 = 容器内存 - 元空间 - 直接内存 - 线程栈（线程数 × 1M）- 预留\n3. 压测看 Young GC 频率（理想几百 ms 一次）与晋升速率\n4. 观察 Mixed GC 是否跟得上，停顿是否达标\n5. 上线后持续看 GC 日志与监控，小步调整\n\n## 误区\n\n- 堆越大越好？→ GC 单次停顿变长，且浪费\n- 盲目调大 Survivor？→ 对象在 Survivor 反复复制浪费 CPU\n- 只调参数不看代码？→ 多数 GC 问题是代码制造垃圾太快\n\n## 面试追问\n\n- 追问：线程栈默认多大？\n  答：-Xss 默认 1M（Linux 64 位），线程多时栈内存可观，可用 -Xss512k 省内存。\n- 追问：容器里 JVM 感知内存吗？\n  答：JDK 8u191+/10+ 支持 -XX:+UseContainerSupport（默认开），按 cgroup 限制算默认堆。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "调优",
+    "JVM参数",
+    "内存设置"
+   ],
+   "r": [
+    "jvm-007"
+   ]
+  },
+  {
+   "id": "jvm-009",
+   "q": "什么是 JIT 即时编译？解释一下分层编译和逃逸分析？",
+   "a": "## 一句话结论\n\nJIT 把热点字节码编译成本地机器码并缓存；分层编译用 C1（快编译、简单优化）+ C2（慢编译、激进优化）按热度升级；逃逸分析判断对象是否逃出方法，支撑栈上分配、同步消除、标量替换。\n\n## 分层（JDK 8 默认）\n\n| 层级 | 解释/编译 | 说明 |\n| --- | --- | --- |\n| 0 | 解释执行 | 收集 profile |\n| 1-3 | C1 | 简单优化，3 带完整 profile |\n| 4 | C2 | 内联、逃逸分析、去虚拟化等激进优化 |\n\n热点判定：方法调用次数 + 循环回边计数（OSR 栈上替换）。\n\n## 三大优化\n\n1. **方法内联**：把小方法体直接展开，消除调用开销，是其它优化的前提\n2. **逃逸分析**：对象只在方法内用 → 可栈上分配/标量替换/同步消除\n3. **公共子表达式消除、去虚拟化**等\n\n## 面试追问\n\n- 追问：为什么解释执行还要保留？\n  答：启动快、收集 profile 喂给 JIT；纯编译启动慢且预热前性能差。\n- 追问：AOT 是什么？\n  答：提前编译成本地码（GraalVM native-image），启动快但失去 JIT 的运行时优化与部分动态特性。",
+   "d": 4,
+   "f": "mid",
+   "t": [
+    "JIT",
+    "分层编译",
+    "逃逸分析",
+    "内联"
+   ],
+   "r": [
+    "jvm-002"
+   ]
+  },
+  {
+   "id": "jvm-010",
+   "q": "什么是内存泄漏和内存溢出？分别举一个你处理过的例子？",
+   "a": "## 一句话结论\n\n溢出是\"要的多给的少\"（瞬间或累积超出上限），泄漏是\"该回收的没回收\"（引用链一直挂着）；泄漏积累到一定程度必然导致溢出。\n\n## 典型泄漏案例\n\n1. **ThreadLocal 不 remove**：线程池线程复用，ThreadLocalMap 的 key 是弱引用但 value 强引用，线程不死 value 不释放\n   - 处理：finally 里 remove()；框架层统一拦截器清理\n2. **静态 Map 当缓存**：只 put 不淘汰\n   - 处理：换 Caffeine，设 maximumSize + expireAfterWrite\n3. **未注销监听器/未关连接**：连接池外的 HttpClient 每次 new\n   - 处理：单例复用 + try-with-resources\n\n## 溢出案例\n\n- 一次性 select * 百万行到 List → OOM\n  处理：流式查询（MyBatis Cursor / JDBC fetchSize）分页拉取\n- 大 JSON 字符串拼接 → 直接写流，不在内存拼\n\n## 排查工具链\n\njstat 看趋势 → jmap dump → MAT 支配树 → 代码定位引用链 → 修复 + 回归压测。\n\n## 面试追问\n\n- 追问：怎么在 CI 里提前发现？\n  答：压测加内存断言、Sonar 规则（未关闭资源）、Code Review 清单、 leakcanary（Android）。",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "内存泄漏",
+    "OOM",
+    "ThreadLocal"
+   ],
+   "r": [
+    "jvm-007"
+   ]
+  }
+ ]
+}

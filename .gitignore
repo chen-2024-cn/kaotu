@@ -1,0 +1,40 @@
+﻿# ===== Python =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 编辑器 =====
+.vscode/
+.idea/
+
+# ===== 临时 =====
+*.tmp
+*.log
+tmp/
+node_modules/
+
+# ===== 构建产物（可由 tools/release.py 一键重新生成，禁止提交）=====
+dist/
+android-build/
+
+# ===== 采集题库（tools/fetch_datasets.py 产物，可再生 + 第三方版权数据，勿入库）=====
+# qpack-*.json(~4MB) + raw/*.jsonl(~7MB) 源自 github.com/kajweb/dict，换机重跑一条命令即复原
+# 仅保留 README.md 与 _manifest.json 作数据溯源（来源/条数/时间）
+json数据/*
+!json数据/README.md
+!json数据/_manifest.json
+
+# ===== 隧道私密凭据与公网地址（严禁提交）=====
+.ngrok_token
+.tunnel_url
+.ngrok_domain
+.public_api
+
+# 注意：android-shell/bagutong.keystore 及其 .bak-pkcs12 备份【故意不忽略】——
+# 覆盖安装 APK 必须使用同一签名密钥，丢失后用户无法升级安装。

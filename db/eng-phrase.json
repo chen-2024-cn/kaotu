@@ -1,0 +1,186 @@
+{
+ "track": "english",
+ "id": "eng-phrase",
+ "name": "常用短语",
+ "badge": "短语",
+ "color": "#8A5A2B",
+ "desc": "完形高频搭配 · 逻辑关系词 · 动词短语",
+ "questions": [
+  {
+   "id": "ep-001",
+   "q": "account for 的三层含义",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "动词短语",
+    "完形"
+   ],
+   "a": "## 卡片\n\n**account for**　（真题年年见的万能短语）\n\n| 含义 | 例句 |\n| --- | --- |\n| ① 占比 | Women **account for** 45% of the workforce.（女性占劳动力的 45%） |\n| ② 解释 | How do you **account for** his absence?（你如何解释他的缺席？） |\n| ③ 消灭/占去 | Disease **accounted for** many pioneers.（疾病夺去许多拓荒者的生命） |\n\n## 图表作文模板（含义①）\n\n> Mobile payments **accounted for** over 60% of total transactions in 2023.\n> 2023 年移动支付占总交易量的 60% 以上。\n\n## 同义替换\n\n- 占比：make up / constitute / represent / comprise\n- 解释：explain / justify / attribute to\n\n## 辨析\n\naccount for 占比 vs. take into account 考虑到（完全不同！）\n完形中见空格后跟百分数 → 优先 account for / make up"
+  },
+  {
+   "id": "ep-002",
+   "q": "be subject to / be prone to / be liable to 易遭受词族",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "搭配",
+    "完形"
+   ],
+   "a": "## 卡片\n\n三个\"**易于/遭受**\"短语，完形辨析高频：\n\n| 短语 | 含义 | 感情色彩 |\n| --- | --- | --- |\n| be subject to | 易遭受；受…支配；以…为条件 | 中性 |\n| be prone to | 易于（坏事） | 贬义 |\n| be liable to | 可能（发生不快事）；负有法律责任 | 贬义/法律 |\n\n## 例句\n\n- The plan is **subject to** approval. 该计划有待批准。\n- Children are **prone to** colds. 孩子容易感冒。\n- You are **liable to** be fined. 你可能会被罚款。\n\n## 同义替换\n\nbe vulnerable to / be susceptible to / be apt to / tend to\n\n## 完形技巧\n\n后面接**负面结果**（disease/mistake/damage）→ prone to\n后面接**条件/规则**（approval/tax/change）→ subject to"
+  },
+  {
+   "id": "ep-003",
+   "q": "attribute...to / contribute to / devote to 归因词族",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "搭配",
+    "to词族"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 | to 的性质 |\n| --- | --- | --- |\n| attribute A **to** B | 把 A 归因于 B | 介词 → + doing/n. |\n| contribute **to** | 促成，导致；贡献 | 介词 → + doing/n. |\n| devote...to | 把…致力于 | 介词 → + doing/n. |\n| lead to | 导致 | 介词 → + doing/n. |\n| owe A to B | 把 A 归功于 B | 介词 → + doing/n. |\n\n**核心陷阱：以上 to 全是介词，后面必须接名词/动名词，不接动词原形！**\n\n## 例句\n\n- He **attributes** his success **to** hard work. 他把成功归因于努力。\n- Smoking **contributes to** lung cancer. 吸烟导致肺癌。\n- She **devoted** herself **to helping** the poor. 她致力于帮助穷人。（√，不是 to help）\n\n## 真题陷阱\n\n> The economic crisis contributed to ______ (rise) unemployment.\n> 答案：rising（介词后接动名词）\n\n## 同义替换（归因方向）\n\nresult from（结果←原因，方向相反！）；A results from B = B results in A"
+  },
+  {
+   "id": "ep-004",
+   "q": "in terms of / with regard to / as to 关于词族",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "搭配",
+    "介词短语"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 | 正式度 |\n| --- | --- | --- |\n| in terms of | 就…而言；在…方面 | ★★★（最常用） |\n| with regard to / regarding | 关于 | ★★★★ |\n| as to | 至于，关于 | ★★★ |\n| as for | 至于（略含轻视/转换话题） | ★★ |\n| when it comes to | 当谈到（to 是介词+doing） | ★★ |\n\n## 例句\n\n- The two cars differ **in terms of** fuel efficiency. 两车在油耗方面不同。\n- **With regard to** your proposal, we need more data. 关于你的提案，我们需要更多数据。\n- **When it comes to investing**, he is very cautious. 谈到投资，他很谨慎。\n\n## 写作模板\n\n> **In terms of** convenience, nothing can match mobile payment.\n> 就便利性而言，没有什么能比得上移动支付。\n\n## 提醒\n\n- in terms of 后接名词/动名词，整句不能缺主语\n- 完形考\"在…方面\"时，in terms of 是标志选项"
+  },
+  {
+   "id": "ep-005",
+   "q": "however / nevertheless / nonetheless 转折词族",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "逻辑词",
+    "完形"
+   ],
+   "a": "## 卡片\n\n**转折三兄弟**（完形逻辑题第一大类）：\n\n| 词 | 语气 | 用法 |\n| --- | --- | --- |\n| however | 中性转折 | 副词，需逗号隔开：However, he refused. |\n| nevertheless | 更强：\"尽管如此仍然\" | = nonetheless |\n| nonetheless | 同上 | 正式文体 |\n\n## 例句\n\n- The task was hard; **nevertheless**, they succeeded. 任务很难，然而他们成功了。\n- He is rich. **However**, he is not happy. 他富有，然而并不快乐。\n\n## 完形决策表（逻辑题必背）\n\n| 关系 | 标志词 |\n| --- | --- |\n| 转折 | however / nevertheless / yet / still / on the contrary / instead / rather than |\n| 因果 | therefore / thus / hence / consequently / as a result |\n| 递进 | moreover / furthermore / in addition / what's more / besides |\n| 举例 | for instance / such as / a case in point |\n| 让步 | although / despite / in spite of / even though |\n| 总结 | in short / to sum up / overall / all in all |\n\n**技巧：完形逻辑题先读空格前后两句的方向（同向/反向），再选词。前后反向→转折词。"
+  },
+  {
+   "id": "ep-006",
+   "q": "instead of / rather than / other than 区别",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "逻辑词",
+    "完形"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 | 接法 |\n| --- | --- | --- |\n| instead of | 代替，而不是 | + n./doing（介词） |\n| rather than | 而不是（并列两端） | + 不定式/doing/n.（连接连词） |\n| other than | 除了（=except） | + n./doing |\n| more than | 超过；不只是 | 比较 |\n\n## 例句\n\n- Walk **instead of** driving. 步行代替开车。\n- He chose to walk **rather than** (to) drive. 他选择步行而不是开车。\n- No one **other than** Tom knew the truth. 除了汤姆没人知道真相。\n\n## 真题陷阱\n\n> The problem lies in the design **rather than** the execution.\n> 问题出在设计而非执行。（rather than 连接两个对等成分）\n\n## 完形技巧\n\n- 空格两边是**对等的动词/名词**且表\"取舍\"→ rather than\n- 空格后是**动名词**表\"代替\"→ instead of\n- 含义\"除了\"→ other than / except / apart from"
+  },
+  {
+   "id": "ep-007",
+   "q": "cope with / deal with / tackle 应对词族",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "动词短语",
+    "完形"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 | 语域 |\n| --- | --- | --- |\n| cope with | 应对，处理（困难局面） | 通用 |\n| deal with | 处理；涉及；对付 | 通用 |\n| tackle | 着力解决（难题） | 正式/写作加分 |\n| handle | 处理，操作 | 通用 |\n| address | 解决（问题） | 正式 ★★★★ |\n| combat | 打击（犯罪/疾病） | 正式 |\n\n## 例句\n\n- She can't **cope with** the pressure. 她承受不住压力。\n- The government must **tackle** unemployment. 政府必须解决失业问题。\n- New measures to **address** climate change. 应对气候变化的新措施。\n\n## 写作替换链（避免重复）\n\nsolve → 用一次后换：tackle / address / cope with / deal with / resolve / combat\n\n## 辨析\n\ncope with 侧重\"顶住困难\"；deal with 侧重\"处理事务\"；tackle/address 侧重\"主动着手解决难题\""
+  },
+  {
+   "id": "ep-008",
+   "q": "give rise to / result in / result from 因果短语",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "搭配",
+    "完形"
+   ],
+   "a": "## 卡片\n\n**方向性极易考反！**\n\n| 短语 | 方向 | 例句 |\n| --- | --- | --- |\n| give rise to | 因 → 果 | Automation **gave rise to** unemployment.（自动化引发失业） |\n| result in | 因 → 果 | The crash **resulted in** injuries. |\n| result from | 果 ← 因 | Injuries **resulted from** the crash. |\n| stem from | 果 ← 因 | His anger **stemmed from** fear. |\n| lie in | 果 ← 因（根源在于） | The answer **lies in** education. |\n\n## 记忆口诀\n\nin 向前导致（result **in** = 导致），from 回溯原因（result **from** = 源于）\n\n## 完形技巧\n\n判断空格前后谁是因谁是果：\n- 因在句首 → give rise to / result in / lead to / bring about\n- 果在句首 → result from / stem from / derive from / owe...to\n\n## 真题语境\n\n> The economic slowdown **gave rise to** widespread anxiety.\n> 经济放缓引发了普遍焦虑。"
+  },
+  {
+   "id": "ep-009",
+   "q": "take into account / take sth. for granted 惯用搭配",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "搭配",
+    "take词族"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 |\n| --- | --- |\n| take...into account/consideration | 把…考虑在内 |\n| take...for granted | 认为…理所当然；**不珍惜** |\n| take advantage of | 利用；占…便宜 |\n| take charge of | 负责，掌管 |\n| take place | 发生（无被动！） |\n| take over | 接管 |\n| take up | 占据（时间/空间）；开始从事 |\n\n## 例句\n\n- We must **take** environmental costs **into account**. 必须把环境成本考虑在内。\n- Don't **take** your health **for granted**. 别把健康当作理所当然。\n- Shopping malls **take up** too much land. 商场占据太多土地。\n\n## 真题高频陷阱\n\ntake...for granted 两个义项都考：\n1. 宾语从句常倒装：I took **it** for granted **that** he would come.（it 作形式宾语）\n2. 阅读中多考\"不珍惜\"义：We often take our parents' love for granted.\n\n## 被动陷阱\n\nThe accident took place.（√）The accident was taken place.（✗ 无被动）"
+  },
+  {
+   "id": "ep-010",
+   "q": "in favor of / in search of / in need of 介词短语族",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "搭配",
+    "介词短语"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 |\n| --- | --- |\n| in favor of | 支持，赞成；有利于 |\n| in search of | 寻找 |\n| in need of | 需要 |\n| in terms of | 就…而言 |\n| in place of | 代替 |\n| in honor of | 纪念，向…致敬 |\n| in charge of | 负责（人作主语） |\n| in the form of | 以…形式 |\n\n## 例句\n\n- Most residents are **in favor of** the plan. 多数居民赞成该计划。\n- They went out **in search of** food. 他们外出寻找食物。\n- The region is badly **in need of** clean water. 该地区极需清洁水。\n\n## 完形技巧\n\n- 后接**被支持对象**且表立场 → in favor of（≈support）\n- 后接**寻找目标** → in search of（≈looking for）\n- being in charge of（人）vs. under the charge of（事被管）\n\n## 辨析\n\nin charge of 负责（主动） / in the charge of 由…照管（被动）：\nThe child is **in the charge of** a nanny. 孩子由保姆照看。"
+  },
+  {
+   "id": "ep-011",
+   "q": "no longer / not any more / hardly...when 否定短语",
+   "d": 3,
+   "f": "mid",
+   "t": [
+    "逻辑词",
+    "否定"
+   ],
+   "a": "## 卡片\n\n| 结构 | 含义 | 例句 |\n| --- | --- | --- |\n| no longer / not...any more | 不再 | He **no longer** lives here. |\n| hardly...when | 一…就…（倒装） | **Hardly** had he arrived **when** it rained. |\n| no sooner...than | 一…就…（倒装） | **No sooner** had I sat down **than** the phone rang. |\n| not until | 直到…才（倒装） | **Not until** midnight **did** he finish. |\n| by no means | 绝不 | He is **by no means** stupid. |\n\n## 倒装规则\n\n否定词开头 → 助动词提前（部分倒装）：\n- Hardly **had** he... / Not until...**did** he...\n- 主句倒装，从句不倒装！\n\n## 真题语境\n\n> **No sooner** had the announcement been made **than** prices soared.\n> 公告一发布，价格就飙升了。\n\n## 记忆\n\nhardly 配 when（H-W），no sooner 配 than（N-T）——\"早(soon)于(when)晚(than)\""
+  },
+  {
+   "id": "ep-012",
+   "q": "put up with / come up with / keep up with 动词短语族",
+   "d": 2,
+   "f": "high",
+   "t": [
+    "动词短语",
+    "完形"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 |\n| --- | --- |\n| put up with | 忍受（≈tolerate / bear） |\n| come up with | 想出（办法/主意）；提出 |\n| keep up with | 跟上，不落后 |\n| catch up with | 赶上 |\n| come up against | 遭遇（困难/反对） |\n| keep up | 保持（不下落）；继续 |\n\n## 例句\n\n- I can't **put up with** the noise anymore. 我再也无法忍受这噪音。\n- She **came up with** a brilliant idea. 她想出一个绝妙的主意。\n- Wages haven't **kept up with** inflation. 工资没跟上通胀。\n\n## 完形技巧\n\n- 空格后是 problem/difficulty 且表遭遇 → come up against\n- 空格后是 idea/plan/solution → come up with\n- 空格后是 pace/trend + with → keep up with\n\n## 记忆\n\nup with 家族按\"动作方向\"记：put up(忍受=撑住) / come up(想出=冒出来) / keep up(跟上=不掉队)"
+  },
+  {
+   "id": "ep-013",
+   "q": "as...as / not so much...as 比较结构",
+   "d": 3,
+   "f": "high",
+   "t": [
+    "句型",
+    "比较"
+   ],
+   "a": "## 卡片\n\n| 结构 | 含义 | 例句 |\n| --- | --- | --- |\n| as + adj. + as | 和…一样 | She is **as tall as** her brother. |\n| not as/so...as | 不如 | It's **not so cold as** yesterday. |\n| **not so much A as B** | 与其说 A 不如说 B | He is **not so much** angry **as** disappointed. |\n| the same as | 与…相同 | 后接名词 |\n| A is to B what C is to D | A 之于 B 如 C 之于 D | Reading is to the mind **what** food is to the body. |\n\n## not so much...as 真题用法\n\n> The problem is **not so much** technical **as** cultural.\n> 问题与其说是技术性的，不如说是文化性的。（**强调 as 后面**）\n\n## 倍数表达（图表作文必备）\n\n- A is three times **as large as** B（A 是 B 的三倍）\n- A is three times **larger than** B（同上，口语等价）\n- **double / triple**：The figure doubled from 20% to 40%.\n\n## 完形技巧\n\n见 not so much → 找 as 配对；见比较级 than → 排除 as...as 选项"
+  },
+  {
+   "id": "ep-014",
+   "q": "range from...to / vary from...to 范围短语",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "搭配",
+    "图表"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 |\n| --- | --- |\n| range from A to B | （在一定范围内）变化，幅度为 A 到 B |\n| vary from A to B | 同义，因…而异 |\n| differ from | 与…不同 |\n| differ in | 在…方面不同 |\n| differ with | 与某人意见不同 |\n\n## 例句\n\n- Prices **range from** $10 **to** $50. 价格从 10 到 50 美元不等。\n- Opinions **vary from** person **to** person. 观点因人而异。\n- The two designs **differ in** color. 两款设计在颜色上不同。\n\n## 图表作文模板\n\n> The data **ranged from** a low of 5% **to** a peak of 40% between 2010 and 2020.\n> 2010 至 2020 年间，数据在 5% 的低点到 40% 的峰值之间波动。\n\n## 搭配拓展\n\na wide range of 各种各样的（= a variety of）\nage range 年龄段；range of prices 价格区间"
+  },
+  {
+   "id": "ep-015",
+   "q": "prior to / in advance of / ahead of 时间短语",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "搭配",
+    "时间"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 | 用法 |\n| --- | --- | --- |\n| prior to | 在…之前（正式） | + n./doing |\n| in advance (of) | 提前 | + n. |\n| ahead of | 在…前面；领先 | + n. |\n| in advance | 预先（独立） | 句末 |\n| up to | 直到；多达；胜任 | + 时间点/数量 |\n\n## 例句\n\n- **Prior to** departure, check your documents. 出发前检查证件。\n- Please book **in advance**. 请提前预订。\n- She finished **ahead of** schedule. 她提前完成。\n- Sales reached **up to** $1 million. 销售额高达百万美元。\n\n## 近义链（\"之前\"）\n\nbefore → prior to → in advance of → ahead of → preceding\n\n## 完形技巧\n\nprior to 的 to 是**介词**：prior to starting（√ starting 动名词），不接动词原形。\ndeadline 搭配：ahead of the deadline 提前；up to the deadline 直到截止。"
+  },
+  {
+   "id": "ep-016",
+   "q": "be aware of / be conscious of / be ignorant of 认知短语",
+   "d": 2,
+   "f": "mid",
+   "t": [
+    "搭配",
+    "认知"
+   ],
+   "a": "## 卡片\n\n| 短语 | 含义 | 色彩 |\n| --- | --- | --- |\n| be aware of | 意识到，知道 | 中性 |\n| be conscious of | 察觉到（清醒地意识到） | 中性偏正式 |\n| be ignorant of | 不知道，无知于 | 贬义 |\n| be skeptical of/about | 怀疑 | 负面态度 |\n| be optimistic/pessimistic about | 乐观/悲观 | 态度题常用 |\n| be indifferent to | 漠不关心 | 负面 |\n\n## 例句\n\n- Consumers are increasingly **aware of** data privacy. 消费者越来越重视数据隐私。\n- He remained **ignorant of** the danger. 他对危险浑然不觉。\n- Experts are **skeptical about** the claim. 专家对该说法持怀疑态度。\n\n## 阅读态度题词库\n\n支持：supportive / approving / favorable\n反对：critical / skeptical / opposed\n客观：objective / neutral / impartial\n**永不对**：indifferent（作者不可能冷漠）/ biased / puzzled"
+  }
+ ]
+}
